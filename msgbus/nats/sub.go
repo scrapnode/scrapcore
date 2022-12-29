@@ -3,7 +3,7 @@ package nats
 import (
 	"context"
 	"github.com/nats-io/nats.go"
-	msgbus2 "github.com/scrapnode/scrapcore/pkg/msgbus"
+	msgbus2 "github.com/scrapnode/scrapcore/msgbus"
 	"time"
 )
 

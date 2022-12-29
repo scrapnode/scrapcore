@@ -2,7 +2,7 @@ package nats
 
 import (
 	"fmt"
-	msgbus2 "github.com/scrapnode/scrapcore/pkg/msgbus"
+	msgbus2 "github.com/scrapnode/scrapcore/msgbus"
 	"strings"
 )
 
