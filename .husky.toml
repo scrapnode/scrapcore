@@ -25,6 +25,6 @@ commit-msg = [
 # could check if this exists
 # email = ".*"
 # optional custom types check regex
-types = "^(feat|fix|build|chore|ci|docs|perf|refactor|revert|style|test|release)$"
+types = "^(feat|fix|build|chore|ci|docs|perf|cleanup|refactor|revert|style|test|release)$"
 # optional header check regex
 # header = "^(?P<type>\w+)(\((?P<scope>[\w/.-]+)\))?(?P<breaking>!)?:( +)?(?P<header>.+)"
