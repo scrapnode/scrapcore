@@ -2,7 +2,7 @@ package nats
 
 import (
 	"github.com/nats-io/nats.go"
-	"github.com/scrapnode/scrapcore/msgbus/configs"
+	"github.com/scrapnode/scrapcore/pkg/msgbus/configs"
 	"go.uber.org/zap"
 	"sync"
 )

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/scrapnode/scrapcore/xconfig"
+	xconfig2 "github.com/scrapnode/scrapcore/pkg/xconfig"
 	"github.com/spf13/cobra"
 	"strings"
 )
@@ -15,7 +15,7 @@ func New() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			provider, err := xconfig.New(dirs...)
+			provider, err := xconfig2.New(dirs...)
 			sets, err := cmd.Flags().GetStringArray("set")
 			if err != nil {
 				return err
@@ -24,7 +24,7 @@ func New() *cobra.Command {
 				kv := strings.Split(s, "=")
 				provider.Set(kv[0], kv[1])
 			}
-			ctx = xconfig.WithContext(ctx, provider)
+			ctx = xconfig2.WithContext(ctx, provider)
 
 			// change context to our new context
 			cmd.SetContext(ctx)

@@ -3,11 +3,11 @@ package nats
 import (
 	"context"
 	"github.com/nats-io/nats.go"
-	"github.com/scrapnode/scrapcore/msgbus"
+	msgbus2 "github.com/scrapnode/scrapcore/pkg/msgbus"
 	"time"
 )
 
-func (natsbus *Nats) Sub(sample *msgbus.Event, queue string, fn msgbus.SubscribeFn) error {
+func (natsbus *Nats) Sub(sample *msgbus2.Event, queue string, fn msgbus2.SubscribeFn) error {
 	subject := NewSubject(natsbus.Configs, sample)
 	opts := []nats.SubOpt{
 		nats.DeliverNew(),
@@ -25,7 +25,7 @@ func (natsbus *Nats) Sub(sample *msgbus.Event, queue string, fn msgbus.Subscribe
 	return nil
 }
 
-func (natsbus *Nats) UseSub(fn msgbus.SubscribeFn) nats.MsgHandler {
+func (natsbus *Nats) UseSub(fn msgbus2.SubscribeFn) nats.MsgHandler {
 	delay := 5 * time.Second
 	backoff := NewBackoff(natsbus.Configs.MaxRetry)
 	if len(backoff) > 0 {

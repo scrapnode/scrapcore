@@ -2,8 +2,8 @@ package nats
 
 import (
 	"fmt"
-	"github.com/scrapnode/scrapcore/msgbus"
-	"github.com/scrapnode/scrapcore/msgbus/configs"
+	"github.com/scrapnode/scrapcore/pkg/msgbus"
+	"github.com/scrapnode/scrapcore/pkg/msgbus/configs"
 	"strconv"
 
 	"github.com/nats-io/nats.go"

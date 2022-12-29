@@ -3,8 +3,8 @@ package nats
 import (
 	"github.com/gosimple/slug"
 	"github.com/samber/lo"
-	"github.com/scrapnode/scrapcore/msgbus"
-	"github.com/scrapnode/scrapcore/msgbus/configs"
+	"github.com/scrapnode/scrapcore/pkg/msgbus"
+	"github.com/scrapnode/scrapcore/pkg/msgbus/configs"
 	"math"
 	"strings"
 	"time"
