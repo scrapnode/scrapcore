@@ -7,7 +7,7 @@ import (
 )
 
 func New() *cobra.Command {
-	cmd := &cobra.Command{
+	command := &cobra.Command{
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			ctx := cmd.Context()
 
@@ -33,14 +33,14 @@ func New() *cobra.Command {
 		ValidArgs: []string{},
 	}
 
-	cmd.PersistentFlags().StringArrayP(
+	command.PersistentFlags().StringArrayP(
 		"configs-dirs", "c",
 		[]string{".", "./secrets"}, "path/to/config/file",
 	)
-	cmd.PersistentFlags().StringArrayP(
+	command.PersistentFlags().StringArrayP(
 		"set", "s",
 		[]string{}, "override values in config file",
 	)
 
-	return cmd
+	return command
 }
