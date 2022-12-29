@@ -7,6 +7,7 @@ require (
 	github.com/nats-io/nats.go v1.22.1
 	github.com/samber/lo v1.37.0
 	github.com/segmentio/ksuid v1.0.4
+	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.14.0
 	go.uber.org/zap v1.24.0
 )
@@ -15,6 +16,7 @@ require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/nats-io/nats-server/v2 v2.9.10 // indirect
