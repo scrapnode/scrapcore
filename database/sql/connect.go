@@ -11,7 +11,7 @@ import (
 
 func (db *SQL) Connect(ctx context.Context) error {
 	// always disconnect previous connection before start a new one
-	if err := db.Disconnect(); err != nil {
+	if err := db.Disconnect(ctx); err != nil {
 		return err
 	}
 

@@ -1,6 +1,8 @@
 package sql
 
-func (db *SQL) Disconnect() error {
+import "context"
+
+func (db *SQL) Disconnect(ctx context.Context) error {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
