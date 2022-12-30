@@ -1,7 +1,7 @@
 package msgbus
 
 import (
-	"encoding/json"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/scrapnode/scrapcore/utils"
 	"strings"
 )
@@ -39,6 +39,7 @@ func (event *Event) SetData(data interface{}) error {
 		return ErrEventDataWasSet
 	}
 
+	var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	bytes, err := json.Marshal(data)
 	if err != nil {
 		return err
