@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/segmentio/ksuid"
@@ -24,4 +25,14 @@ func NewBucketFromTime(template string, t time.Time) (string, int64) {
 func MD5(text string) string {
 	hash := md5.Sum([]byte(text))
 	return hex.EncodeToString(hash[:])
+}
+
+func Censor(value string, show int) string {
+	if len(value) < show {
+		return value
+	}
+
+	s := value[0:show]
+	hide := strings.Repeat("*", len(value[show:]))
+	return s + hide
 }
