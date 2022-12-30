@@ -4,14 +4,13 @@ import (
 	"context"
 	"github.com/scrapnode/scrapcore/database/configs"
 	"github.com/scrapnode/scrapcore/xlogger"
-	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"sync"
 )
 
 type SQL struct {
 	Configs *configs.Configs
-	Logger  *zap.SugaredLogger
+	Logger  *xlogger.Logger
 	Conn    *gorm.DB
 
 	mu sync.Mutex

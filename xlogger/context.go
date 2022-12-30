@@ -3,19 +3,18 @@ package xlogger
 import (
 	"context"
 	"errors"
-	"go.uber.org/zap"
 )
 
 type ctxkey string
 
 const CTXKEY ctxkey = "xlogger"
 
-func WithContext(ctx context.Context, logger *zap.SugaredLogger) context.Context {
+func WithContext(ctx context.Context, logger *Logger) context.Context {
 	return context.WithValue(ctx, CTXKEY, logger)
 }
 
-func FromContext(ctx context.Context) *zap.SugaredLogger {
-	logger, ok := ctx.Value(CTXKEY).(*zap.SugaredLogger)
+func FromContext(ctx context.Context) *Logger {
+	logger, ok := ctx.Value(CTXKEY).(*Logger)
 	if !ok {
 		panic(errors.New("no logger was configured"))
 	}
