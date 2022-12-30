@@ -2,13 +2,13 @@ package sql
 
 import (
 	"context"
-	"github.com/scrapnode/scrapcore/xlogger"
+	"go.uber.org/zap"
 	"gorm.io/gorm/logger"
 	"time"
 )
 
 type Logger struct {
-	zap *xlogger.Logger
+	zap *zap.SugaredLogger
 }
 
 func (logger Logger) LogMode(logger.LogLevel) logger.Interface {
