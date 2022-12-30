@@ -4,34 +4,20 @@ import (
 	"context"
 	"github.com/scrapnode/scrapcore/database/configs"
 	"github.com/scrapnode/scrapcore/xlogger"
-	"gorm.io/driver/postgres"
-	"gorm.io/driver/sqlite"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"net/url"
+	"sync"
 )
 
-func New(ctx context.Context, cfg *configs.Configs) (*gorm.DB, error) {
-	dialector, err := Dial(cfg.Dsn)
-	if err != nil {
-		return nil, err
-	}
+type SQL struct {
+	Configs *configs.Configs
+	Logger  *zap.SugaredLogger
+	Conn    *gorm.DB
 
-	logger := &Logger{zap: xlogger.FromContext(ctx).With("package", "database.sql")}
-	return gorm.Open(dialector, &gorm.Config{
-		Logger: logger,
-	})
+	mu sync.Mutex
 }
 
-// Dial support both SQLite & PostgreSQL
-func Dial(dsn string) (gorm.Dialector, error) {
-	uri, err := url.Parse(dsn)
-	if err != nil {
-		return nil, err
-	}
-
-	if uri.Scheme == "sqlite" {
-		return sqlite.Open(uri.Host + uri.Path + uri.RawQuery), nil
-	}
-
-	return postgres.Open(dsn), nil
+func New(ctx context.Context, cfg *configs.Configs) (*SQL, error) {
+	logger := xlogger.FromContext(ctx).With("pkg", "database.sql")
+	return &SQL{Configs: cfg, Logger: logger}, nil
 }
