@@ -6,12 +6,13 @@ import (
 	"github.com/scrapnode/scrapcore/msgbus"
 	"github.com/scrapnode/scrapcore/msgbus/configs"
 	"github.com/scrapnode/scrapcore/xlogger"
+	"go.uber.org/zap"
 	"sync"
 )
 
 type Nats struct {
 	Configs *configs.Configs
-	Logger  *xlogger.Logger
+	Logger  *zap.SugaredLogger
 
 	mu   sync.Mutex
 	conn *nats.Conn

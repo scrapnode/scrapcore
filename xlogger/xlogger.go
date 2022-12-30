@@ -6,11 +6,7 @@ import (
 	"os"
 )
 
-type Logger struct {
-	*zap.SugaredLogger
-}
-
-func New(debug bool) *Logger {
+func New(debug bool) *zap.SugaredLogger {
 	ws := zapcore.Lock(os.Stdout)
 
 	priority := withEnableLevel(debug)
@@ -20,7 +16,7 @@ func New(debug bool) *Logger {
 		zapcore.NewCore(encoder, ws, priority),
 	)
 	logger := zap.New(core)
-	return &Logger{logger.Sugar()}
+	return logger.Sugar()
 }
 
 func withEnableLevel(debug bool) zap.LevelEnablerFunc {
