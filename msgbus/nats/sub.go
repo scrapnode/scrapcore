@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func (natsbus *Nats) Sub(sample *msgbus2.Event, queue string, fn msgbus2.SubscribeFn) error {
+func (natsbus *Nats) Sub(ctx context.Context, sample *msgbus2.Event, queue string, fn msgbus2.SubscribeFn) error {
 	subject := NewSubject(natsbus.Configs, sample)
 	opts := []nats.SubOpt{
 		nats.DeliverNew(),

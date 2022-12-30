@@ -1,12 +1,13 @@
 package nats
 
 import (
+	"context"
 	"fmt"
-	msgbus2 "github.com/scrapnode/scrapcore/msgbus"
+	"github.com/scrapnode/scrapcore/msgbus"
 	"strings"
 )
 
-func (natsbus *Nats) Pub(event *msgbus2.Event) (*msgbus2.PubRes, error) {
+func (natsbus *Nats) Pub(ctx context.Context, event *msgbus.Event) (*msgbus.PubRes, error) {
 	// @TODO: validator
 	logger := natsbus.Logger.With("event_key", event.Key())
 
@@ -23,7 +24,7 @@ func (natsbus *Nats) Pub(event *msgbus2.Event) (*msgbus2.PubRes, error) {
 	}
 
 	segements := []string{ack.Domain, ack.Stream, fmt.Sprint(ack.Sequence), event.Id}
-	res := &msgbus2.PubRes{Key: strings.Join(segements, "/")}
+	res := &msgbus.PubRes{Key: strings.Join(segements, "/")}
 
 	logger.Debugw("published", "publish_key", res.Key)
 	return res, nil
