@@ -31,5 +31,7 @@ func (db *SQL) Migrate(ctx context.Context) error {
 		db.Logger.Errorw("migrate up got error", "error", err.Error())
 		return err
 	}
+
+	db.Logger.Debug("migrated")
 	return nil
 }
