@@ -11,11 +11,6 @@ import (
 )
 
 func (natsbus *Nats) Connect(ctx context.Context) error {
-	// always disconnect previous connection before start a new one
-	if err := natsbus.Disconnect(ctx); err != nil {
-		return err
-	}
-
 	natsbus.mu.Lock()
 	defer natsbus.mu.Unlock()
 
