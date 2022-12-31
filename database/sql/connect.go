@@ -7,6 +7,7 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"net/url"
+	"strings"
 )
 
 func (db *SQL) Connect(ctx context.Context) error {
@@ -42,7 +43,7 @@ func Dial(dsn string) (gorm.Dialector, error) {
 		return nil, err
 	}
 
-	if uri.Scheme == "sqlite" {
+	if strings.HasPrefix(uri.Scheme, "sqlite") {
 		return sqlite.Open(uri.Host + uri.Path + uri.RawQuery), nil
 	}
 
