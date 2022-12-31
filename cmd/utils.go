@@ -18,6 +18,7 @@ func ChainPreRunE() func(cmd *cobra.Command, args []string) error {
 		return err
 	}
 }
+
 func PrintObj(title string, obj any) {
 	fmt.Printf("%s\n", title)
 
@@ -38,4 +39,34 @@ func PrintObj(title string, obj any) {
 	t.SetOutputMirror(os.Stdout)
 	t.SetAllowedRowLength(lo.Min([]int{col, 160}))
 	t.Render()
+}
+
+func MustMarkFlagRequired(cmd *cobra.Command, name string) {
+	if err := cmd.MarkFlagRequired(name); err != nil {
+		panic(err)
+	}
+}
+
+func MustGetFlagBool(cmd *cobra.Command, name string) bool {
+	value, err := cmd.Flags().GetBool(name)
+	if err != nil {
+		panic(err)
+	}
+	return value
+}
+
+func MustGetFlagInt(cmd *cobra.Command, name string) int {
+	value, err := cmd.Flags().GetInt(name)
+	if err != nil {
+		panic(err)
+	}
+	return value
+}
+
+func MustGetFlagString(cmd *cobra.Command, name string) string {
+	value, err := cmd.Flags().GetString(name)
+	if err != nil {
+		panic(err)
+	}
+	return value
 }
