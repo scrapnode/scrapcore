@@ -6,6 +6,8 @@ type Database interface {
 	Connect(ctx context.Context) error
 	Disconnect(ctx context.Context) error
 	Migrate(ctx context.Context) error
+
+	GetConn() any
 }
 
 type ListQuery struct {
