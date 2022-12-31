@@ -74,7 +74,7 @@ func (natsbus *Nats) SetStream(ctx context.Context) error {
 			return err
 		}
 
-		natsbus.Logger.Debugw("create new stream", "stream_name", name)
+		natsbus.Logger.Debugw("create new stream", "stream_name", name, "subjects", jscfg.Subjects)
 	} else {
 		natsbus.Logger.Debugw("found stream", "stream_name", stream.Config.Name)
 	}
