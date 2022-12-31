@@ -8,7 +8,7 @@ import (
 
 func New() *cobra.Command {
 	command := &cobra.Command{
-		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		PreRunE: func(cmd *cobra.Command, args []string) error {
 			ctx := cmd.Context()
 
 			dirs, err := cmd.Flags().GetStringArray("configs-dirs")
