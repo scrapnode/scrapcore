@@ -7,9 +7,9 @@ import (
 	"net/http"
 )
 
-func NewHttpPing(ctx context.Context, cfg *xconfig.Configs) *Handler {
+func NewHttpPing(ctx context.Context, cfg *xconfig.Configs) *HttpHandler {
 	logger := xlogger.FromContext(ctx)
-	return &Handler{
+	return &HttpHandler{
 		Method: http.MethodGet,
 		Path:   "/",
 		Handler: func(writer http.ResponseWriter, request *http.Request) {

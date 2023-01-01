@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func NewHttp(ctx context.Context, cfg *Configs, handlers []*Handler) (Transport, error) {
+func NewHttp(ctx context.Context, cfg *Configs, handlers []*HttpHandler) (Transport, error) {
 	router := httprouter.New()
 	for _, handler := range handlers {
 		router.HandlerFunc(handler.Method, handler.Path, handler.Handler)
@@ -26,7 +26,7 @@ func NewHttp(ctx context.Context, cfg *Configs, handlers []*Handler) (Transport,
 	return transport, nil
 }
 
-type Handler struct {
+type HttpHandler struct {
 	Method  string
 	Path    string
 	Handler http.HandlerFunc
