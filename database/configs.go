@@ -1,4 +1,4 @@
-package configs
+package database
 
 type Configs struct {
 	Dsn        string `json:"dsn"`

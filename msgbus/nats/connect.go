@@ -25,22 +25,26 @@ func (natsbus *Nats) Connect(ctx context.Context) error {
 		nats.Timeout(2 * time.Second),
 		nats.MaxReconnects(7),
 		nats.DisconnectErrHandler(func(c *nats.Conn, err error) {
-			natsbus.Logger.Error(fmt.Sprintf("got disconnected with reason: %q", err))
+			natsbus.Logger.Error(fmt.Sprintf("msgbus.nats: got disconnected with reason: %q", err))
 		}),
 		nats.ReconnectHandler(func(conn *nats.Conn) {
-			natsbus.Logger.Error(fmt.Sprintf("got reconnected to %v", conn.ConnectedUrl()))
+			natsbus.Logger.Error(fmt.Sprintf("msgbus.nats: got reconnected to %v", conn.ConnectedUrl()))
 		}),
 		nats.ClosedHandler(func(nc *nats.Conn) {
-			natsbus.Logger.Error(fmt.Sprintf("connection is closed with reason: %q", nc.LastError()))
+			natsbus.Logger.Error(fmt.Sprintf("msgbus.nats: connection is closed with reason: %q", nc.LastError()))
 
 			// terminal presses then let another gorouting handle other component disconnection
-			syscall.Kill(syscall.Getpid(), syscall.SIGINT)
+			if err := syscall.Kill(syscall.Getpid(), syscall.SIGINT); err != nil {
+				natsbus.Logger.Error(fmt.Sprintf("msgbus.nats: could not kill process: %q", err))
+			}
 		}),
 		nats.ErrorHandler(func(c *nats.Conn, s *nats.Subscription, err error) {
-			natsbus.Logger.Errorw(fmt.Sprintf("got error: %q", err), "subject", s.Subject, "queue", s.Queue)
+			natsbus.Logger.Errorw(fmt.Sprintf("msgbus.nats: got error: %q", err), "subject", s.Subject, "queue", s.Queue)
 
 			// terminal presses then let another gorouting handle other component disconnection
-			syscall.Kill(syscall.Getpid(), syscall.SIGINT)
+			if err := syscall.Kill(syscall.Getpid(), syscall.SIGINT); err != nil {
+				natsbus.Logger.Error(fmt.Sprintf("msgbus.nats: could not kill process: %q", err))
+			}
 		}),
 	}
 	conn, err := nats.Connect(natsbus.Configs.Uri, opts...)

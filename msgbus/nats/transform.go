@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"github.com/nats-io/nats.go"
 	"github.com/scrapnode/scrapcore/msgbus"
-	"github.com/scrapnode/scrapcore/msgbus/configs"
 	"strconv"
 )
 
-func NewMsg(cfg *configs.Configs, event *msgbus.Event) (*nats.Msg, error) {
+func NewMsg(cfg *msgbus.Configs, event *msgbus.Event) (*nats.Msg, error) {
 	msg := nats.NewMsg(NewSubject(cfg, event))
 	msg.Data = []byte(event.Data)
 

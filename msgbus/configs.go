@@ -1,4 +1,4 @@
-package configs
+package msgbus
 
 type Configs struct {
 	Uri    string `json:"uri"`
