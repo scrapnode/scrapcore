@@ -11,3 +11,5 @@ type Transport interface {
 type Configs struct {
 	ListenAddress string `json:"listen_address"`
 }
+
+type H map[string]interface{}

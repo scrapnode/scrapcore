@@ -23,3 +23,21 @@ func WriteString(writer http.ResponseWriter, data string) error {
 	_, err := writer.Write(utils.StringToBytes(data))
 	return err
 }
+
+func WriteErr400(writer http.ResponseWriter, err error) error {
+	writer.WriteHeader(http.StatusBadRequest)
+	data := H{"error": err.Error()}
+	return WriteJSON(writer, data)
+}
+
+func WriteErr404(writer http.ResponseWriter, err error) error {
+	writer.WriteHeader(http.StatusNotFound)
+	data := H{"error": err.Error()}
+	return WriteJSON(writer, data)
+}
+
+func WriteErr500(writer http.ResponseWriter, err error) error {
+	writer.WriteHeader(http.StatusInternalServerError)
+	data := H{"error": err.Error()}
+	return WriteJSON(writer, data)
+}
