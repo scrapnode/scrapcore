@@ -21,6 +21,13 @@ type Headers struct {
 }
 
 func (headers *Headers) FromHttpRequest(r *http.Request) error {
+	if headers.keyvalues == nil {
+		headers.keyvalues = map[string][]string{}
+	}
+	if headers.keyvalue == nil {
+		headers.keyvalue = map[string]string{}
+	}
+
 	for key, values := range r.Header {
 		headers.keyvalues[key] = values
 		headers.keyvalue[key] = values[0]
