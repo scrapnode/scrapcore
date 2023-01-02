@@ -1,6 +1,8 @@
 package transport
 
-import "context"
+import (
+	"context"
+)
 
 type Transport interface {
 	Start(ctx context.Context) error
@@ -11,5 +13,3 @@ type Transport interface {
 type Configs struct {
 	ListenAddress string `json:"listen_address"`
 }
-
-type H map[string]interface{}
