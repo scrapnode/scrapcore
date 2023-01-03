@@ -3,10 +3,9 @@ package pipeline
 import (
 	"context"
 	"github.com/go-playground/validator/v10"
-	"go.uber.org/zap"
 )
 
-func UseValidator(logger *zap.SugaredLogger) Pipeline {
+func UseValidator() Pipeline {
 	return func(next Pipe) Pipe {
 		validate := validator.New()
 
