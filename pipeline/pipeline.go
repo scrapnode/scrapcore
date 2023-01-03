@@ -9,6 +9,7 @@ type ctxkey string
 const (
 	CTXKEY_REQ ctxkey = "pipeline.request"
 	CTXKEY_RES ctxkey = "pipeline.response"
+	CTXKEY_ERR ctxkey = "pipeline.errors"
 )
 
 type Pipe func(ctx context.Context) (context.Context, error)
