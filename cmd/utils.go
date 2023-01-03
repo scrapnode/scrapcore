@@ -70,3 +70,11 @@ func MustGetFlagString(cmd *cobra.Command, name string) string {
 	}
 	return value
 }
+
+func MustGetFlagStringArray(cmd *cobra.Command, name string) []string {
+	values, err := cmd.Flags().GetStringArray(name)
+	if err != nil {
+		panic(err)
+	}
+	return values
+}
