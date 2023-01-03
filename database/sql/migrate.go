@@ -16,8 +16,8 @@ func (db *SQL) Migrate(ctx context.Context) error {
 	defer db.mu.Unlock()
 
 	if db.Configs.MigrateDir == "" {
-		db.Logger.Error(database.ErrMigrationDirEmpty.Error())
-		return database.ErrMigrationDirEmpty
+		db.Logger.Error(database.ErrMigrationDirNotSet.Error())
+		return database.ErrMigrationDirNotSet
 	}
 
 	dir := fmt.Sprintf("file://%s", db.Configs.MigrateDir)
