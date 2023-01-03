@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func (natsbus *Nats) Sub(ctx context.Context, sample *msgbus2.Event, queue string, fn msgbus2.SubscribeFn) error {
+func (natsbus *Nats) Sub(ctx context.Context, sample *msgbus2.Event, queue string, fn msgbus2.SubscribeFn) (func() error, error) {
 	subject := NewSubject(natsbus.Configs, sample)
 	opts := []nats.SubOpt{
 		nats.DeliverNew(),
@@ -16,13 +16,14 @@ func (natsbus *Nats) Sub(ctx context.Context, sample *msgbus2.Event, queue strin
 		nats.BackOff(NewBackoff(natsbus.Configs.MaxRetry)),
 	}
 
+	sub, err := natsbus.jsc.QueueSubscribe(subject, queue, natsbus.UseSub(fn), opts...)
 	// by default the consumer that is created by QueueSubscribe will be there forever (set durable to TRUE)
-	if _, err := natsbus.jsc.QueueSubscribe(subject, queue, natsbus.UseSub(fn), opts...); err != nil {
-		return err
+	if err != nil {
+		return func() error { return nil }, err
 	}
 
 	natsbus.Logger.Debugw("subscribed", "subject", subject, "queue", queue)
-	return nil
+	return func() error { return sub.Drain() }, err
 }
 
 func (natsbus *Nats) UseSub(fn msgbus2.SubscribeFn) nats.MsgHandler {
