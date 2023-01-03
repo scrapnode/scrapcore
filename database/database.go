@@ -6,7 +6,7 @@ type Database interface {
 	Connect(ctx context.Context) error
 	Disconnect(ctx context.Context) error
 	Migrate(ctx context.Context) error
-	Seed(ctx context.Context) error
+	Seed(ctx context.Context, seeds []string) error
 
 	GetConn() any
 }

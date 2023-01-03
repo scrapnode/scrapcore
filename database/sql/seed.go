@@ -14,16 +14,16 @@ import (
 	"strings"
 )
 
-func (db *SQL) Seed(ctx context.Context) error {
+func (db *SQL) Seed(ctx context.Context, seeds []string) error {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
-	if len(db.Configs.SeedFiles) == 0 {
+	if len(seeds) == 0 {
 		db.Logger.Error(database.ErrSeedFilesEmpty.Error())
 		return database.ErrSeedFilesEmpty
 	}
 
-	for _, filepath := range db.Configs.SeedFiles {
+	for _, filepath := range seeds {
 		err := db.Conn.Transaction(func(tx *gorm.DB) error {
 			// Force finalization of unreachable objects
 			defer runtime.GC()
