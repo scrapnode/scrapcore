@@ -48,6 +48,15 @@ func (event *Event) SetData(data interface{}) error {
 	return nil
 }
 
+func (event *Event) GetData(dest interface{}) error {
+	if event.Data == nil {
+		return ErrEventDataEmpty
+	}
+
+	var json = jsoniter.ConfigCompatibleWithStandardLibrary
+	return json.Unmarshal(event.Data, dest)
+}
+
 func (event *Event) Key() string {
 	keys := []string{
 		event.Workspace,
