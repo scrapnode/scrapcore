@@ -1,27 +1,37 @@
 package msgbus
 
 import (
+	"fmt"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/scrapnode/scrapcore/utils"
 	"strings"
 )
 
+var METAKEY_PREFIX = "x-scrapevent"
 var (
-	METAKEY_EVENT_ID         = "X-ScrapCore-Event-Id"
-	METAKEY_EVENT_WORKSPACE  = "X-ScrapCore-Event-Workspace"
-	METAKEY_EVENT_APP        = "X-ScrapCore-Event-App"
-	METAKEY_EVENT_TYPE       = "X-ScrapCore-Event-Type"
-	METAKEY_EVENT_TIMESTAMPS = "X-ScrapCore-Event-Timestamps"
+	METAKEY_ID         = fmt.Sprintf("%s-id", METAKEY_PREFIX)
+	METAKEY_WORKSPACE  = fmt.Sprintf("%s-workspace", METAKEY_PREFIX)
+	METAKEY_APP        = fmt.Sprintf("%s-app", METAKEY_PREFIX)
+	METAKEY_TYPE       = fmt.Sprintf("%s-type", METAKEY_PREFIX)
+	METAKEY_TIMESTAMPS = fmt.Sprintf("%s-timestamps", METAKEY_PREFIX)
 )
+var METAKEY_RESERVE = []string{
+	METAKEY_ID,
+	METAKEY_WORKSPACE,
+	METAKEY_APP,
+	METAKEY_TYPE,
+	METAKEY_TIMESTAMPS,
+}
 
 type Event struct {
 	Workspace string `json:"workspace"`
 	App       string `json:"app"`
 	Type      string `json:"type"`
 
-	Id         string `json:"id"`
-	Timestamps int64  `json:"timestamps"`
-	Data       []byte `json:"data"`
+	Id         string            `json:"id"`
+	Timestamps int64             `json:"timestamps"`
+	Data       []byte            `json:"data"`
+	Metadata   map[string]string `json:"metadata"`
 }
 
 func (event *Event) SetId() error {
