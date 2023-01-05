@@ -55,10 +55,10 @@ func (natsbus *Nats) Connect(ctx context.Context) error {
 
 	natsbus.conn = conn
 	natsbus.Logger.Debug("connected")
-	return natsbus.setStream(ctx, NewSubject(natsbus.Configs, nil))
+	return natsbus.setStream(ctx)
 }
 
-func (natsbus *Nats) setStream(ctx context.Context, subject string) error {
+func (natsbus *Nats) setStream(ctx context.Context) error {
 	jsc, err := natsbus.conn.JetStream()
 	if err != nil {
 		return err
@@ -73,7 +73,6 @@ func (natsbus *Nats) setStream(ctx context.Context, subject string) error {
 	}
 
 	jscfg := ParseJetStreamConfigs(ctx, natsbus.Configs)
-	jscfg.Subjects = lo.Uniq(append(jscfg.Subjects, subject))
 	// if there is no stream was created, create a new one
 	if err != nil {
 		if _, err = jsc.AddStream(jscfg); err != nil {

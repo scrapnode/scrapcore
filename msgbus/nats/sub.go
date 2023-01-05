@@ -16,10 +16,6 @@ func (natsbus *Nats) Sub(ctx context.Context, sample *msgbus2.Event, queue strin
 		nats.BackOff(NewBackoff(natsbus.Configs.MaxRetry)),
 	}
 
-	if err := natsbus.setStream(ctx, subject); err != nil {
-		return func() error { return nil }, err
-	}
-
 	sub, err := natsbus.jsc.QueueSubscribe(subject, queue, natsbus.UseSub(fn), opts...)
 	// by default the consumer that is created by QueueSubscribe will be there forever (set durable to TRUE)
 	if err != nil {
