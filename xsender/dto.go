@@ -16,7 +16,7 @@ func (req *Request) SetHeaders(data string) error {
 	return jsoniter.ConfigCompatibleWithStandardLibrary.Unmarshal([]byte(data), &req.Headers)
 }
 
-func (req *Request) GetHeaders(data string) (string, error) {
+func (req *Request) GetHeaders() (string, error) {
 	bytes, err := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(req.Headers)
 	return string(bytes), err
 }
@@ -32,7 +32,7 @@ func (res *Response) SetHeaders(data string) error {
 	return jsoniter.ConfigCompatibleWithStandardLibrary.Unmarshal([]byte(data), &res.Headers)
 }
 
-func (res *Response) GetHeaders(data string) (string, error) {
+func (res *Response) GetHeaders() (string, error) {
 	bytes, err := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(res.Headers)
 	return string(bytes), err
 }
