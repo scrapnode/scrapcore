@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/nats-io/nats.go"
+	"github.com/samber/lo"
 	"os"
 	"syscall"
 	"time"
@@ -71,16 +72,20 @@ func (natsbus *Nats) SetStream(ctx context.Context) error {
 		return err
 	}
 
+	jscfg := ParseJetStreamConfigs(ctx, natsbus.Configs)
 	// if there is no stream was created, create a new one
 	if err != nil {
-		jscfg := ParseJetStreamConfigs(ctx, natsbus.Configs)
 		if _, err = jsc.AddStream(jscfg); err != nil {
 			return err
 		}
 
 		natsbus.Logger.Debugw("create new stream", "stream_name", name, "subjects", jscfg.Subjects)
 	} else {
-		natsbus.Logger.Debugw("found stream", "stream_name", stream.Config.Name)
+		stream.Config.Subjects = lo.Uniq(append(stream.Config.Subjects, jscfg.Subjects...))
+		if _, err = jsc.UpdateStream(&stream.Config); err != nil {
+			return err
+		}
+		natsbus.Logger.Debugw("found stream", "stream_name", stream.Config.Name, "stream_cfg", stream.Config)
 	}
 
 	natsbus.jsc = jsc
