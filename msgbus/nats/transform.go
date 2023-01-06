@@ -49,9 +49,6 @@ func NewEvent(msg *nats.Msg) (*msgbus.Event, error) {
 	event.Timestamps = ts
 
 	for key, value := range msg.Header {
-		if !strings.HasPrefix(key, msgbus.METAKEY_PREFIX) {
-			continue
-		}
 		if lo.Contains(msgbus.METAKEY_RESERVE, key) {
 			continue
 		}
