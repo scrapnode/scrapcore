@@ -9,12 +9,12 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 )
 
-type TracingConfig struct {
+type TracingConfigs struct {
 	TraceName string
 	SpanName  string
 }
 
-func UseTracing(pipeline Pipeline, cfg *TracingConfig) Pipeline {
+func UseTracing(pipeline Pipeline, cfg *TracingConfigs) Pipeline {
 	return func(next Pipe) Pipe {
 		return func(ctx context.Context) (context.Context, error) {
 			ctx, span := otel.Tracer(cfg.TraceName).Start(ctx, cfg.SpanName)
