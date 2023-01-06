@@ -6,7 +6,6 @@ import (
 	"github.com/samber/lo"
 	"github.com/scrapnode/scrapcore/msgbus"
 	"strconv"
-	"strings"
 )
 
 func NewMsg(cfg *msgbus.Configs, event *msgbus.Event) (*nats.Msg, error) {
@@ -23,9 +22,10 @@ func NewMsg(cfg *msgbus.Configs, event *msgbus.Event) (*nats.Msg, error) {
 
 	if event.Metadata != nil {
 		for key, value := range event.Metadata {
-			if strings.HasPrefix(key, msgbus.METAKEY_PREFIX) {
-				msg.Header.Set(key, value)
+			if lo.Contains(msgbus.METAKEY_RESERVE, key) {
+				continue
 			}
+			msg.Header.Set(key, value)
 		}
 	}
 
@@ -49,9 +49,6 @@ func NewEvent(msg *nats.Msg) (*msgbus.Event, error) {
 	event.Timestamps = ts
 
 	for key, value := range msg.Header {
-		if !strings.HasPrefix(key, msgbus.METAKEY_PREFIX) {
-			continue
-		}
 		if lo.Contains(msgbus.METAKEY_RESERVE, key) {
 			continue
 		}

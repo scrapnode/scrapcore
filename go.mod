@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/go-playground/validator/v10 v10.11.1
+	github.com/go-resty/resty/v2 v2.7.0
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/gosimple/slug v1.13.1
 	github.com/jedib0t/go-pretty/v6 v6.4.3
@@ -24,7 +25,6 @@ require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
-	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
