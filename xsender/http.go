@@ -3,6 +3,7 @@ package xsender
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/go-resty/resty/v2"
 	"net/http"
 	"time"
@@ -21,6 +22,11 @@ func NewHttp(ctx context.Context, cfg *Configs) Send {
 		res, err := callHttp(client, request)
 		if err != nil {
 			return nil, err
+		}
+
+		ok := res.StatusCode() >= 200 && res.StatusCode() < 300
+		if !ok {
+			return nil, errors.New(fmt.Sprintf("xsender: %d - %s", res.StatusCode(), res.Status()))
 		}
 
 		response := &Response{
