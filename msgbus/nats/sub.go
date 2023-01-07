@@ -44,12 +44,12 @@ func (natsbus *Nats) UseSub(fn msgbus2.SubscribeFn) nats.MsgHandler {
 			}
 			return
 		}
-		ctx := otel.GetTextMapPropagator().Extract(context.Background(), propagation.MapCarrier(event.Metadata))
 
 		logger := natsbus.Logger.With("event_key", event.Key())
 		logger.Debug("got event")
 
 		// handler of subscription must handle all the error, if it returns any error, we will trigger retry
+		ctx := otel.GetTextMapPropagator().Extract(context.Background(), propagation.MapCarrier(event.Metadata))
 		if err := fn(ctx, event); err != nil {
 			logger.Errorw("could not handle event", "error", err.Error())
 			// nats.BackOff does not work with QueueSubscribe, so we will fall back to first value of nats.BackOff
