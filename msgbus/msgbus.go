@@ -2,7 +2,7 @@ package msgbus
 
 import "context"
 
-type SubscribeFn func(event *Event) error
+type SubscribeFn func(ctx context.Context, event *Event) error
 
 type MsgBus interface {
 	Pub(ctx context.Context, event *Event) (*PubRes, error)

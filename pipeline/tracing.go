@@ -3,10 +3,8 @@ package pipeline
 import (
 	"context"
 	"fmt"
-	"github.com/scrapnode/scrapcore/utils"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
-	"go.opentelemetry.io/otel/propagation"
 )
 
 type TracingConfigs struct {
@@ -19,7 +17,7 @@ func UseTracing(pipeline Pipeline, cfg *TracingConfigs) Pipeline {
 		return func(ctx context.Context) (context.Context, error) {
 			ctx, span := otel.Tracer(cfg.TraceName).Start(ctx, cfg.SpanName)
 
-			// use fake next function to make sure we don't trace subchain pipeline execute time
+			// use fake next function to make sure we don't trace sub-chain pipeline execute time
 			ctx, err := pipeline(func(ctx context.Context) (context.Context, error) {
 				return ctx, nil
 			})(ctx)
@@ -30,29 +28,8 @@ func UseTracing(pipeline Pipeline, cfg *TracingConfigs) Pipeline {
 			}
 
 			// don't use defer span.End()
-			// becuase it will measure subchain pipeline execute time too
+			// because it will measure sub-chain pipeline execute time too
 			span.End()
-			return next(ctx)
-		}
-	}
-}
-
-func UseTracingPropagator(key string) Pipeline {
-	return func(next Pipe) Pipe {
-		propagator := otel.GetTextMapPropagator()
-		return func(ctx context.Context) (context.Context, error) {
-			value := utils.StructValueByKey(ctx.Value(CTXKEY_REQ), key)
-			if value == nil {
-				return next(ctx)
-			}
-
-			metadata, ok := value.(map[string]string)
-			if !ok {
-				return next(ctx)
-			}
-
-			carier := propagation.MapCarrier(metadata)
-			ctx = propagator.Extract(ctx, carier)
 			return next(ctx)
 		}
 	}

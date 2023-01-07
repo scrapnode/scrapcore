@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/nats-io/nats.go"
 	msgbus2 "github.com/scrapnode/scrapcore/msgbus"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 	"time"
 )
 
@@ -34,24 +36,24 @@ func (natsbus *Nats) UseSub(fn msgbus2.SubscribeFn) nats.MsgHandler {
 	}
 
 	return func(msg *nats.Msg) {
-		ctx := context.Background()
-
 		event, err := NewEvent(msg)
 		if err != nil {
 			natsbus.Logger.Errorw("could not parse event from message", "error", err.Error())
-			if err := msg.Ack(nats.Context(ctx)); err != nil {
+			if err := msg.Ack(); err != nil {
 				natsbus.Logger.Errorw("ack was failed", "error", err.Error())
 			}
 			return
 		}
+		ctx := otel.GetTextMapPropagator().Extract(context.Background(), propagation.MapCarrier(event.Metadata))
+
 		logger := natsbus.Logger.With("event_key", event.Key())
 		logger.Debug("got event")
 
-		// handler of subcription must handle all of the error, if it returns any error, we will trigger retry
-		if err := fn(event); err != nil {
+		// handler of subscription must handle all the error, if it returns any error, we will trigger retry
+		if err := fn(ctx, event); err != nil {
 			logger.Errorw("could not handle event", "error", err.Error())
-			// nats.BackOff does not work with QueueSubscribe so we will fallback to first value of nats.BackOff
-			// we cannot retry by ourself with some hack of set headers and Nak it
+			// nats.BackOff does not work with QueueSubscribe, so we will fall back to first value of nats.BackOff
+			// we cannot retry by ourselves with some hack of set headers and Nak it
 			if err := msg.NakWithDelay(delay); err != nil {
 				logger.Errorw("nak was failed", "error", err.Error())
 				return
@@ -61,7 +63,7 @@ func (natsbus *Nats) UseSub(fn msgbus2.SubscribeFn) nats.MsgHandler {
 			return
 		}
 
-		if err := msg.Ack(nats.Context(ctx)); err != nil {
+		if err := msg.Ack(); err != nil {
 			logger.Errorw("ack was failed", "error", err.Error())
 			return
 		}

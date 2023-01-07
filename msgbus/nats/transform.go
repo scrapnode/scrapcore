@@ -6,11 +6,12 @@ import (
 	"github.com/samber/lo"
 	"github.com/scrapnode/scrapcore/msgbus"
 	"strconv"
+	"strings"
 )
 
 func NewMsg(cfg *msgbus.Configs, event *msgbus.Event) (*nats.Msg, error) {
 	msg := nats.NewMsg(NewSubject(cfg, event))
-	msg.Data = []byte(event.Data)
+	msg.Data = event.Data
 
 	msg.Header.Set("Nats-Msg-Id", event.Id)
 	// with metadata
@@ -25,6 +26,10 @@ func NewMsg(cfg *msgbus.Configs, event *msgbus.Event) (*nats.Msg, error) {
 			if lo.Contains(msgbus.METAKEY_RESERVE, key) {
 				continue
 			}
+			if strings.HasPrefix(key, "Nats") {
+				continue
+			}
+
 			msg.Header.Set(key, value)
 		}
 	}
@@ -50,6 +55,9 @@ func NewEvent(msg *nats.Msg) (*msgbus.Event, error) {
 
 	for key, value := range msg.Header {
 		if lo.Contains(msgbus.METAKEY_RESERVE, key) {
+			continue
+		}
+		if strings.HasPrefix(key, "Nats") {
 			continue
 		}
 
