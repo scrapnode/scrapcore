@@ -21,15 +21,17 @@ func UseTracing(pipeline Pipeline, cfg *TracingConfigs) Pipeline {
 			ctx, err := pipeline(func(ctx context.Context) (context.Context, error) {
 				return ctx, nil
 			})(ctx)
-			if err == nil {
-				span.SetStatus(codes.Ok, fmt.Sprintf("%s.%s: ok", cfg.TraceName, cfg.SpanName))
-			} else {
+
+			// return error as soon as we got it
+			if err != nil {
 				span.SetStatus(codes.Error, err.Error())
+				// don't use defer span.End()
+				// because it will measure sub-chain pipeline execute time too
+				span.End()
+				return ctx, err
 			}
 
-			// don't use defer span.End()
-			// because it will measure sub-chain pipeline execute time too
-			span.End()
+			span.SetStatus(codes.Ok, fmt.Sprintf("%s.%s: ok", cfg.TraceName, cfg.SpanName))
 			return next(ctx)
 		}
 	}
