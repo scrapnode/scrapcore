@@ -10,6 +10,18 @@ type Configs struct {
 	Tracer *TracerConfigs
 }
 
+func (cfg *Configs) Clone() *Configs {
+	return &Configs{
+		Namespace: cfg.Namespace,
+		Name:      cfg.Name,
+		Version:   cfg.Version,
+		Tracer: &TracerConfigs{
+			Endpoint: cfg.Tracer.Endpoint,
+			Ratio:    cfg.Tracer.Ratio,
+		},
+	}
+}
+
 type TracerConfigs struct {
 	Endpoint string  `json:"endpoint"`
 	Ratio    float64 `json:"ratio"`
