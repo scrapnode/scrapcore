@@ -32,6 +32,7 @@ func UseTracing(pipeline Pipeline, cfg *TracingConfigs) Pipeline {
 			}
 
 			span.SetStatus(codes.Ok, fmt.Sprintf("%s.%s: ok", cfg.TraceName, cfg.SpanName))
+			span.End()
 			return next(ctx)
 		}
 	}

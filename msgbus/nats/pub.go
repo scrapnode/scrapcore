@@ -13,7 +13,10 @@ func (natsbus *Nats) Pub(ctx context.Context, event *msgbus.Event) (*msgbus.PubR
 	// @TODO: validator
 	logger := natsbus.Logger.With("event_key", event.Key())
 
-	otel.GetTextMapPropagator().Inject(ctx, propagation.MapCarrier(event.Metadata))
+	if event.Metadata != nil {
+		otel.GetTextMapPropagator().Inject(ctx, propagation.MapCarrier(event.Metadata))
+	}
+
 	msg, err := NewMsg(natsbus.Configs, event)
 	if err != nil {
 		logger.Errorw("could not construct Nats message from event", "error", err.Error())
