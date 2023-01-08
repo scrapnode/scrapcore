@@ -7,7 +7,7 @@ type Configs struct {
 	Name      string `json:"name"`
 	Version   string `json:"version"`
 
-	Tracer *TracerConfigs
+	Tracer *TracerConfigs `json:"tracer"`
 }
 
 func (cfg *Configs) Clone() *Configs {
