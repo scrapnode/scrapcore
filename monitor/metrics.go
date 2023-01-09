@@ -41,6 +41,7 @@ func (metrics *Metrics) Connect(ctx context.Context) error {
 	}
 
 	metrics.exporter = exporter
+
 	provider := metric.NewMeterProvider(
 		metric.WithResource(res),
 		metric.WithReader(

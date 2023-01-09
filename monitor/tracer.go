@@ -7,7 +7,7 @@ import (
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
 )
 
@@ -43,11 +43,11 @@ func (tracer *Tracer) Connect(ctx context.Context) error {
 	}
 	tracer.exporter = exporter
 
-	bsp := sdktrace.NewBatchSpanProcessor(exporter)
-	provider := sdktrace.NewTracerProvider(
-		sdktrace.WithSampler(sdktrace.TraceIDRatioBased(tracer.cfg.Tracer.Ratio)),
-		sdktrace.WithResource(res),
-		sdktrace.WithSpanProcessor(bsp),
+	bsp := trace.NewBatchSpanProcessor(exporter)
+	provider := trace.NewTracerProvider(
+		trace.WithSampler(trace.TraceIDRatioBased(tracer.cfg.Tracer.Ratio)),
+		trace.WithResource(res),
+		trace.WithSpanProcessor(bsp),
 	)
 
 	// set global propagator to trace context (the default is no-op).
