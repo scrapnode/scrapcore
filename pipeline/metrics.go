@@ -29,10 +29,7 @@ func UseMetrics(cfg *MetricsConfigs) Pipeline {
 			duration := time.Since(start)
 			historam.Record(ctx, duration.Milliseconds())
 
-			if err != nil {
-				return ctx, err
-			}
-			return next(ctx)
+			return ctx, err
 		}
 	}
 }
