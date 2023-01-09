@@ -7,7 +7,8 @@ type Configs struct {
 	Name      string `json:"name"`
 	Version   string `json:"version"`
 
-	Tracer *TracerConfigs `json:"tracer"`
+	Tracer  *TracerConfigs  `json:"tracer"`
+	Metrics *MetricsConfigs `json:"metrics"`
 }
 
 func (cfg *Configs) Clone() *Configs {
@@ -25,6 +26,10 @@ func (cfg *Configs) Clone() *Configs {
 type TracerConfigs struct {
 	Endpoint string  `json:"endpoint"`
 	Ratio    float64 `json:"ratio"`
+}
+
+type MetricsConfigs struct {
+	Endpoint string `json:"endpoint"`
 }
 
 type Monitor interface {
