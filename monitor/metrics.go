@@ -41,7 +41,7 @@ func (metrics *Metrics) Connect(ctx context.Context) error {
 	}
 
 	metrics.exporter = exporter
-	meterProvider := metric.NewMeterProvider(
+	provider := metric.NewMeterProvider(
 		metric.WithResource(res),
 		metric.WithReader(
 			metric.NewPeriodicReader(
@@ -50,7 +50,7 @@ func (metrics *Metrics) Connect(ctx context.Context) error {
 			),
 		),
 	)
-	global.SetMeterProvider(meterProvider)
+	global.SetMeterProvider(provider)
 
 	return nil
 }
