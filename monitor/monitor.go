@@ -20,6 +20,9 @@ func (cfg *Configs) Clone() *Configs {
 			Endpoint: cfg.Tracer.Endpoint,
 			Ratio:    cfg.Tracer.Ratio,
 		},
+		Metrics: &MetricsConfigs{
+			Endpoint: cfg.Metrics.Endpoint,
+		},
 	}
 }
 
