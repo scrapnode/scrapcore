@@ -57,5 +57,9 @@ func (tracer *Tracer) Connect(ctx context.Context) error {
 }
 
 func (tracer *Tracer) Disconnect(ctx context.Context) error {
+	if tracer.exporter == nil {
+		return nil
+	}
+
 	return tracer.exporter.Shutdown(ctx)
 }

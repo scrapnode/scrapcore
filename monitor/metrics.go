@@ -6,7 +6,7 @@ import (
 	"go.opentelemetry.io/otel/metric/global"
 	"go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
-	semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"time"
 )
 
@@ -56,5 +56,9 @@ func (metrics *Metrics) Connect(ctx context.Context) error {
 }
 
 func (metrics *Metrics) Disconnect(ctx context.Context) error {
+	if metrics.exporter == nil {
+		return nil
+	}
+
 	return metrics.exporter.Shutdown(ctx)
 }
