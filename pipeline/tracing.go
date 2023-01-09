@@ -8,6 +8,7 @@ import (
 )
 
 type TracingConfigs struct {
+	DryRun    bool
 	TraceName string
 	SpanName  string
 }
@@ -15,6 +16,10 @@ type TracingConfigs struct {
 func UseTracing(pipeline Pipeline, cfg *TracingConfigs) Pipeline {
 	return func(next Pipe) Pipe {
 		return func(ctx context.Context) (context.Context, error) {
+			if cfg.DryRun {
+				return next(ctx)
+			}
+
 			ctx, span := otel.Tracer(cfg.TraceName).Start(ctx, cfg.SpanName)
 
 			// use fake next function to make sure we don't trace sub-chain pipeline execute time
