@@ -24,7 +24,7 @@ func WithTraceAttributes(ctx context.Context, kv ...any) context.Context {
 		kv = kv[:len(kv)-2]
 	}
 
-	var attributes map[string]interface{}
+	attributes := map[string]interface{}{}
 	for i := 0; i < len(kv)-1; i += 2 {
 		key, ok := kv[i].(string)
 		if !ok {
