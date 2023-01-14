@@ -4,18 +4,14 @@ import (
 	"context"
 	"fmt"
 	"github.com/scrapnode/scrapcore/msgbus"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/propagation"
+	"github.com/scrapnode/scrapcore/msgbus/entity"
 	"strings"
 )
 
-func (natsbus *Nats) Pub(ctx context.Context, event *msgbus.Event) (*msgbus.PubRes, error) {
+func (natsbus *Nats) Pub(ctx context.Context, event *entity.Event) (*msgbus.PubRes, error) {
 	// @TODO: validator
 	logger := natsbus.Logger.With("event_key", event.Key())
-
-	if event.Metadata != nil {
-		otel.GetTextMapPropagator().Inject(ctx, propagation.MapCarrier(event.Metadata))
-	}
+	event.SetMetadata(natsbus.Monitor.Propergator().Extract(ctx))
 
 	msg, err := NewMsg(natsbus.Configs, event)
 	if err != nil {

@@ -3,13 +3,15 @@ package nats
 import (
 	"context"
 	"github.com/nats-io/nats.go"
-	msgbus2 "github.com/scrapnode/scrapcore/msgbus"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/propagation"
+	"github.com/scrapnode/scrapcore/msgbus/entity"
 	"time"
 )
 
-func (natsbus *Nats) Sub(ctx context.Context, sample *msgbus2.Event, queue string, fn msgbus2.SubscribeFn) (func() error, error) {
+func (natsbus *Nats) Sub(
+	ctx context.Context,
+	sample *entity.Event, queue string,
+	fn func(ctx context.Context, event *entity.Event) error,
+) (func() error, error) {
 	subject := NewSubject(natsbus.Configs, sample)
 	opts := []nats.SubOpt{
 		nats.DeliverNew(),
@@ -28,7 +30,7 @@ func (natsbus *Nats) Sub(ctx context.Context, sample *msgbus2.Event, queue strin
 	return func() error { return sub.Drain() }, err
 }
 
-func (natsbus *Nats) UseSub(fn msgbus2.SubscribeFn) nats.MsgHandler {
+func (natsbus *Nats) UseSub(fn func(ctx context.Context, event *entity.Event) error) nats.MsgHandler {
 	delay := 5 * time.Second
 	backoff := NewBackoff(natsbus.Configs.MaxRetry)
 	if len(backoff) > 0 {
@@ -48,11 +50,7 @@ func (natsbus *Nats) UseSub(fn msgbus2.SubscribeFn) nats.MsgHandler {
 		logger := natsbus.Logger.With("event_key", event.Key())
 		logger.Debug("got event")
 
-		ctx := context.Background()
-		if event.Metadata != nil {
-			ctx = otel.GetTextMapPropagator().Extract(context.Background(), propagation.MapCarrier(event.Metadata))
-		}
-
+		ctx := natsbus.Monitor.Propergator().Inject(context.Background(), event.GetMetadata())
 		// handler of subscription must handle all the error, if it returns any error, we will trigger retry
 		if err := fn(ctx, event); err != nil {
 			logger.Errorw("could not handle event", "error", err.Error())

@@ -3,11 +3,11 @@ package nats
 import (
 	"context"
 	"github.com/nats-io/nats.go"
-	"github.com/scrapnode/scrapcore/msgbus"
+	"github.com/scrapnode/scrapcore/msgbus/configs"
 	"time"
 )
 
-func ParseJetStreamConfigs(ctx context.Context, configs *msgbus.Configs) *nats.StreamConfig {
+func ParseJetStreamConfigs(ctx context.Context, configs *configs.Configs) *nats.StreamConfig {
 	// @TODO: allow configure JetStream configs from context
 
 	// default

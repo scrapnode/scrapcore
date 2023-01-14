@@ -1,7 +1,5 @@
 package monitor
 
-import "context"
-
 type Configs struct {
 	Namespace string `json:"namespace"`
 	Name      string `json:"name"`
@@ -33,9 +31,4 @@ type TracerConfigs struct {
 
 type MetricsConfigs struct {
 	Endpoint string `json:"endpoint"`
-}
-
-type Monitor interface {
-	Connect(ctx context.Context) error
-	Disconnect(ctx context.Context) error
 }
