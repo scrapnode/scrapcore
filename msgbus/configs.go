@@ -1,4 +1,4 @@
-package configs
+package msgbus
 
 type Configs struct {
 	Dsn    string `json:"dsn"`

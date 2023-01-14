@@ -1,4 +1,4 @@
-package sql
+package database
 
 import "context"
 
@@ -6,11 +6,11 @@ func (db *SQL) Disconnect(ctx context.Context) error {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
-	if db.Conn == nil {
+	if db.conn == nil {
 		return nil
 	}
 
-	database, err := db.Conn.DB()
+	database, err := db.conn.DB()
 	if err != nil {
 		return err
 	}
@@ -18,6 +18,6 @@ func (db *SQL) Disconnect(ctx context.Context) error {
 		return err
 	}
 
-	db.Logger.Debug("disconnected")
+	db.logger.Debug("database.sql: disconnected")
 	return nil
 }

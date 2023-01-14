@@ -3,20 +3,17 @@ package xmonitor
 import (
 	"context"
 	"github.com/scrapnode/scrapcore/xmonitor/attributes"
-	"github.com/scrapnode/scrapcore/xmonitor/configs"
-	"github.com/scrapnode/scrapcore/xmonitor/noop"
-	"github.com/scrapnode/scrapcore/xmonitor/propergator"
 )
 
-func New(ctx context.Context, cfg *configs.Configs) (Monitor, error) {
-	return noop.New(ctx, cfg)
+func New(ctx context.Context, cfg *Configs) (Monitor, error) {
+	return NewNoop(ctx, cfg)
 }
 
 type Monitor interface {
 	Connect(ctx context.Context) error
 	Disconnect(ctx context.Context) error
 
-	Propergator() propergator.Propergator
+	Propergator() Propergator
 	Trace(ctx context.Context, ns, name string) (context.Context, Span)
 	Record(ctx context.Context, ns, name string, incr int64)
 	Count(ctx context.Context, ns, name string, incr int64)
@@ -27,4 +24,9 @@ type Span interface {
 	OK(desc string)
 	KO(desc string)
 	End()
+}
+
+type Propergator interface {
+	Extract(ctx context.Context) map[string]string
+	Inject(ctx context.Context, carrier map[string]string) context.Context
 }

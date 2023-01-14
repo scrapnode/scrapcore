@@ -1,5 +1,5 @@
-package sql
+package database
 
 func (db *SQL) GetConn() any {
-	return db.Conn
+	return db.conn
 }

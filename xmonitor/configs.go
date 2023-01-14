@@ -1,4 +1,4 @@
-package configs
+package xmonitor
 
 type Configs struct {
 	Provider       string `json:"provider"`

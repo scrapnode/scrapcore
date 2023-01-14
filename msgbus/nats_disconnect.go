@@ -1,4 +1,4 @@
-package nats
+package msgbus
 
 import "context"
 
@@ -16,6 +16,6 @@ func (natsbus *Nats) Disconnect(ctx context.Context) error {
 
 	natsbus.conn = nil
 	natsbus.jsc = nil
-	natsbus.Logger.Debug("disconnected")
+	natsbus.logger.Debug("msgbus.nats: disconnected")
 	return nil
 }

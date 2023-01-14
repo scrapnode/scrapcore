@@ -1,4 +1,4 @@
-package sql
+package database
 
 import (
 	"context"
@@ -8,30 +8,29 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/database/sqlite3"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"github.com/scrapnode/scrapcore/database"
 )
 
 func (db *SQL) Migrate(ctx context.Context) error {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
-	if db.Configs.MigrateDir == "" {
-		db.Logger.Error(database.ErrMigrationDirNotSet.Error())
-		return database.ErrMigrationDirNotSet
+	if db.cfg.MigrateDir == "" {
+		db.logger.Error(ErrMigrationDirNotSet.Error())
+		return ErrMigrationDirNotSet
 	}
 
-	dir := fmt.Sprintf("file://%s", db.Configs.MigrateDir)
-	m, err := migrate.New(dir, db.Configs.Dsn)
+	dir := fmt.Sprintf("file://%s", db.cfg.MigrateDir)
+	m, err := migrate.New(dir, db.cfg.Dsn)
 	if err != nil {
-		db.Logger.Errorw("could not construct migration", "directory", dir)
+		db.logger.Errorw("database.sql: could not construct migration", "directory", dir)
 		return err
 	}
 
 	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
-		db.Logger.Errorw("migrate up got error", "error", err.Error())
+		db.logger.Errorw("database.sql: migrate up got error", "error", err.Error())
 		return err
 	}
 
-	db.Logger.Debug("migrated")
+	db.logger.Debug("database.sql: migrated")
 	return nil
 }

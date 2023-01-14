@@ -1,4 +1,4 @@
-package sql
+package database
 
 import (
 	"bytes"
@@ -6,7 +6,6 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/database/sqlite3"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"github.com/scrapnode/scrapcore/database"
 	"gorm.io/gorm"
 	"io"
 	"os"
@@ -19,12 +18,12 @@ func (db *SQL) Seed(ctx context.Context, seeds []string) error {
 	defer db.mu.Unlock()
 
 	if len(seeds) == 0 {
-		db.Logger.Error(database.ErrSeedFilesEmpty.Error())
-		return database.ErrSeedFilesEmpty
+		db.logger.Error(ErrSeedFilesEmpty.Error())
+		return ErrSeedFilesEmpty
 	}
 
 	for _, filepath := range seeds {
-		err := db.Conn.Transaction(func(tx *gorm.DB) error {
+		err := db.conn.Transaction(func(tx *gorm.DB) error {
 			// Force finalization of unreachable objects
 			defer runtime.GC()
 
@@ -63,11 +62,11 @@ func (db *SQL) Seed(ctx context.Context, seeds []string) error {
 		})
 
 		if err != nil {
-			db.Logger.Error(database.ErrSeedFailed.Error())
+			db.logger.Error(ErrSeedFailed.Error())
 			return err
 		}
 	}
 
-	db.Logger.Debug("seeded")
+	db.logger.Debug("seeded")
 	return nil
 }

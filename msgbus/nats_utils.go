@@ -1,20 +1,18 @@
-package nats
+package msgbus
 
 import (
 	"github.com/gosimple/slug"
 	"github.com/samber/lo"
-	"github.com/scrapnode/scrapcore/msgbus/configs"
-	"github.com/scrapnode/scrapcore/msgbus/entity"
 	"math"
 	"strings"
 	"time"
 )
 
-func NewStreamName(cfg *configs.Configs) string {
+func NatsStreamName(cfg *Configs) string {
 	return strings.ReplaceAll(slug.Make(cfg.Name), "-", "_")
 }
 
-func NewSubject(cfg *configs.Configs, sample *entity.Event) string {
+func NatsSubject(cfg *Configs, sample *Event) string {
 	segments := []string{cfg.Region, cfg.Name}
 	if sample == nil {
 		return strings.Join(append(segments, ">"), ".")
