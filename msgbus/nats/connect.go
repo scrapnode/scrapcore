@@ -48,7 +48,7 @@ func (natsbus *Nats) Connect(ctx context.Context) error {
 			}
 		}),
 	}
-	conn, err := nats.Connect(natsbus.Configs.Uri, opts...)
+	conn, err := nats.Connect(natsbus.Configs.Dsn, opts...)
 	if err != nil {
 		return err
 	}

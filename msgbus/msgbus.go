@@ -8,6 +8,8 @@ import (
 )
 
 func New(ctx context.Context, cfg *configs.Configs) (MsgBus, error) {
+	// base con Dsn we will use different msgbus,
+	// use Nats.io by default
 	return nats.New(ctx, cfg)
 }
 

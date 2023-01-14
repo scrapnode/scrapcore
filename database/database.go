@@ -1,6 +1,16 @@
 package database
 
-import "context"
+import (
+	"context"
+	"github.com/scrapnode/scrapcore/database/configs"
+	"github.com/scrapnode/scrapcore/database/sql"
+)
+
+func New(ctx context.Context, cfg *configs.Configs) (Database, error) {
+	// base con Dsn we will use different msgbus,
+	// use SQL (SQLite/PostgreSQL) by default
+	return sql.New(ctx, cfg)
+}
 
 type Database interface {
 	Connect(ctx context.Context) error

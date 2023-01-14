@@ -1,9 +1,7 @@
 package configs
 
 type Configs struct {
-	Provider string `json:"provider"`
-
-	Uri    string `json:"uri"`
+	Dsn    string `json:"dsn"`
 	Region string `json:"region"`
 	Name   string `json:"name"`
 
