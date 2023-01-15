@@ -5,7 +5,7 @@ import (
 )
 
 func New(ctx context.Context, cfg *Configs) (Database, error) {
-	// base con Dsn we will use different msgbus,
+	// base con Dsn we will use different database,
 	// use SQL (SQLite/PostgreSQL) by default
 	return NewSQL(ctx, cfg)
 }
