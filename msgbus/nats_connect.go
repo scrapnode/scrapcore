@@ -26,25 +26,25 @@ func (natsbus *Nats) Connect(ctx context.Context) error {
 		nats.Timeout(2 * time.Second),
 		nats.MaxReconnects(7),
 		nats.DisconnectErrHandler(func(c *nats.Conn, err error) {
-			natsbus.logger.Error(fmt.Sprintf("msgbus.nats: got disconnected with reason: %q", err))
+			natsbus.logger.Error(fmt.Sprintf("got disconnected with reason: %q", err))
 		}),
 		nats.ReconnectHandler(func(conn *nats.Conn) {
-			natsbus.logger.Error(fmt.Sprintf("msgbus.nats: got reconnected to %v", conn.ConnectedUrl()))
+			natsbus.logger.Error(fmt.Sprintf("got reconnected to %v", conn.ConnectedUrl()))
 		}),
 		nats.ClosedHandler(func(nc *nats.Conn) {
-			natsbus.logger.Error(fmt.Sprintf("msgbus.nats: connection is closed with reason: %q", nc.LastError()))
+			natsbus.logger.Error(fmt.Sprintf("connection is closed with reason: %q", nc.LastError()))
 
 			// terminal presses then let another gorouting handle other component disconnection
 			if err := syscall.Kill(syscall.Getpid(), syscall.SIGINT); err != nil {
-				natsbus.logger.Error(fmt.Sprintf("msgbus.nats: could not kill process: %q", err))
+				natsbus.logger.Error(fmt.Sprintf("could not kill process: %q", err))
 			}
 		}),
 		nats.ErrorHandler(func(c *nats.Conn, s *nats.Subscription, err error) {
-			natsbus.logger.Errorw(fmt.Sprintf("msgbus.nats: got error: %q", err), "subject", s.Subject, "queue", s.Queue)
+			natsbus.logger.Errorw(fmt.Sprintf("got error: %q", err), "subject", s.Subject, "queue", s.Queue)
 
 			// terminal presses then let another gorouting handle other component disconnection
 			if err := syscall.Kill(syscall.Getpid(), syscall.SIGINT); err != nil {
-				natsbus.logger.Error(fmt.Sprintf("msgbus.nats: could not kill process: %q", err))
+				natsbus.logger.Error(fmt.Sprintf("could not kill process: %q", err))
 			}
 		}),
 	}
@@ -54,7 +54,7 @@ func (natsbus *Nats) Connect(ctx context.Context) error {
 	}
 
 	natsbus.conn = conn
-	natsbus.logger.Debug("msgbus.nats: connected")
+	natsbus.logger.Debug("connected")
 	return natsbus.setStream(ctx)
 }
 
@@ -87,13 +87,13 @@ func (natsbus *Nats) setStream(ctx context.Context) error {
 			return err
 		}
 
-		natsbus.logger.Debugw("msgbus.nats: create new stream", "stream_name", name, "subjects", cfg.Subjects)
+		natsbus.logger.Debugw("create new stream", "stream_name", name, "subjects", cfg.Subjects)
 	} else {
 		stream.Config.Subjects = lo.Uniq(append(stream.Config.Subjects, cfg.Subjects...))
 		if _, err = jsc.UpdateStream(&stream.Config); err != nil {
 			return err
 		}
-		natsbus.logger.Debugw("msgbus.nats: found stream", "stream_name", stream.Config.Name, "stream_cfg", stream.Config)
+		natsbus.logger.Debugw("found stream", "stream_name", stream.Config.Name, "stream_cfg", stream.Config)
 	}
 
 	natsbus.jsc = jsc

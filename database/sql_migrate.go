@@ -22,15 +22,15 @@ func (db *SQL) Migrate(ctx context.Context) error {
 	dir := fmt.Sprintf("file://%s", db.cfg.MigrateDir)
 	m, err := migrate.New(dir, db.cfg.Dsn)
 	if err != nil {
-		db.logger.Errorw("database.sql: could not construct migration", "directory", dir)
+		db.logger.Errorw("could not construct migration", "directory", dir)
 		return err
 	}
 
 	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
-		db.logger.Errorw("database.sql: migrate up got error", "error", err.Error())
+		db.logger.Errorw("migrate up got error", "error", err.Error())
 		return err
 	}
 
-	db.logger.Debug("database.sql: migrated")
+	db.logger.Debug("migrated")
 	return nil
 }

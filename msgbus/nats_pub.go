@@ -13,19 +13,19 @@ func (natsbus *Nats) Pub(ctx context.Context, event *Event) (*PubRes, error) {
 
 	msg, err := Event2NatsMsg(natsbus.cfg, event)
 	if err != nil {
-		logger.Errorw("msgbus.nats: could not construct message from event", "error", err.Error())
+		logger.Errorw("could not construct message from event", "error", err.Error())
 		return nil, err
 	}
 
 	ack, err := natsbus.jsc.PublishMsg(msg)
 	if err != nil {
-		logger.Errorw("msgbus.nats: could not publish message to Nats", "error", err.Error())
+		logger.Errorw("could not publish message to Nats", "error", err.Error())
 		return nil, err
 	}
 
 	segments := []string{ack.Domain, ack.Stream, fmt.Sprint(ack.Sequence), event.Id}
 	res := &PubRes{Key: strings.Join(segments, "/")}
 
-	logger.Debugw("msgbus.nats: published", "publish_key", res.Key)
+	logger.Debugw("published", "publish_key", res.Key)
 	return res, nil
 }

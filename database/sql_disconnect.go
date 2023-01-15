@@ -18,6 +18,6 @@ func (db *SQL) Disconnect(ctx context.Context) error {
 		return err
 	}
 
-	db.logger.Debug("database.sql: disconnected")
+	db.logger.Debug("disconnected")
 	return nil
 }

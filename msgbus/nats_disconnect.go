@@ -16,6 +16,6 @@ func (natsbus *Nats) Disconnect(ctx context.Context) error {
 
 	natsbus.conn = nil
 	natsbus.jsc = nil
-	natsbus.logger.Debug("msgbus.nats: disconnected")
+	natsbus.logger.Debug("disconnected")
 	return nil
 }

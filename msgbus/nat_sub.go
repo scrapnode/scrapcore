@@ -6,11 +6,7 @@ import (
 	"time"
 )
 
-func (natsbus *Nats) Sub(
-	ctx context.Context,
-	sample *Event, queue string,
-	fn func(ctx context.Context, event *Event) error,
-) (func() error, error) {
+func (natsbus *Nats) Sub(ctx context.Context, sample *Event, queue string, fn SubscribeFn) (func() error, error) {
 	subject := NatsSubject(natsbus.cfg, sample)
 	opts := []nats.SubOpt{
 		nats.DeliverNew(),
@@ -25,7 +21,7 @@ func (natsbus *Nats) Sub(
 		return func() error { return nil }, err
 	}
 
-	natsbus.logger.Debugw("msgbus.nats: subscribed", "subject", subject, "queue", queue)
+	natsbus.logger.Debugw("subscribed", "subject", subject, "queue", queue)
 	return func() error { return sub.Drain() }, err
 }
 
@@ -39,36 +35,36 @@ func (natsbus *Nats) UseSub(fn func(ctx context.Context, event *Event) error) na
 	return func(msg *nats.Msg) {
 		event, err := NatsMsg2Event(msg)
 		if err != nil {
-			natsbus.logger.Errorw("msgbus.nats: could not parse event from message", "error", err.Error())
+			natsbus.logger.Errorw("could not parse event from message", "error", err.Error())
 			if err := msg.Ack(); err != nil {
-				natsbus.logger.Errorw("msgbus.nats: ack was failed", "error", err.Error())
+				natsbus.logger.Errorw("ack was failed", "error", err.Error())
 			}
 			return
 		}
 
 		logger := natsbus.logger.With("event_key", event.Key())
-		logger.Debug("msgbus.nats: got event")
+		logger.Debug("got event")
 
 		ctx := natsbus.monitor.Propergator().Inject(context.Background(), event.Metadata)
 		// handler of subscription must handle all the error, if it returns any error, we will trigger retry
 		if err := fn(ctx, event); err != nil {
-			logger.Errorw("msgbus.nats: could not handle event", "error", err.Error())
+			logger.Errorw("could not handle event", "error", err.Error())
 			// nats.BackOff does not work with QueueSubscribe, so we will fall back to first value of nats.BackOff
 			// we cannot retry by ourselves with some hack of set headers and Nak it
 			if err := msg.NakWithDelay(delay); err != nil {
-				logger.Errorw("msgbus.nats: nak was failed", "error", err.Error())
+				logger.Errorw("nak was failed", "error", err.Error())
 				return
 			}
 
-			logger.Errorw("msgbus.nats: nak was succesful", "error", err.Error())
+			logger.Errorw("nak was succesful", "error", err.Error())
 			return
 		}
 
 		if err := msg.Ack(); err != nil {
-			logger.Errorw("msgbus.nats: ack was failed", "error", err.Error())
+			logger.Errorw("ack was failed", "error", err.Error())
 			return
 		}
 
-		logger.Debug("msgbus.nats: processed event")
+		logger.Debug("processed event")
 	}
 }

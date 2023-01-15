@@ -10,9 +10,10 @@ func New(ctx context.Context, cfg *Configs) (MsgBus, error) {
 	return NewNats(ctx, cfg)
 }
 
+type SubscribeFn func(ctx context.Context, event *Event) error
 type MsgBus interface {
 	Pub(ctx context.Context, event *Event) (*PubRes, error)
-	Sub(ctx context.Context, sample *Event, queue string, fn func(ctx context.Context, event *Event) error) (func() error, error)
+	Sub(ctx context.Context, sample *Event, queue string, fn SubscribeFn) (func() error, error)
 
 	Connect(ctx context.Context) error
 	Disconnect(ctx context.Context) error

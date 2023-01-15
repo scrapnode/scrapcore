@@ -33,7 +33,7 @@ func (db *SQL) Connect(ctx context.Context) error {
 		return err
 	}
 
-	db.logger.Debug("database.sql: connected")
+	db.logger.Debug("connected")
 	db.conn = conn
 	return nil
 }
