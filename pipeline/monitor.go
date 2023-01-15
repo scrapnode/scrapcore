@@ -36,7 +36,7 @@ func UseTracing(pipeline Pipeline, monitor xmonitor.Monitor, ns, name string) Pi
 	}
 }
 
-func UseMetrics(pipeline Pipeline, monitor xmonitor.Monitor, ns, name string) Pipeline {
+func UseMetrics(monitor xmonitor.Monitor, ns, name string) Pipeline {
 	return func(next Pipe) Pipe {
 		return func(ctx context.Context) (context.Context, error) {
 			start := time.Now()
