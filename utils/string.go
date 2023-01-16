@@ -15,10 +15,6 @@ func NewId(prefix string) string {
 	return fmt.Sprintf("%s_%s", prefix, ksuid.New().String())
 }
 
-func NewBucket(template string) (string, int64) {
-	return NewBucketFromTime(template, time.Now().UTC())
-}
-
 func NewBucketFromTime(template string, t time.Time) (string, int64) {
 	return t.Format(template), t.UnixMilli()
 }
