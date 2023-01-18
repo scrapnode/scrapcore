@@ -6,6 +6,5 @@ type ScanQuery struct {
 }
 
 type ScanResult struct {
-	Cursor  string
-	Records []interface{}
+	Cursor string
 }
