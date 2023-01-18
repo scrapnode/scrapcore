@@ -5,7 +5,7 @@ type ScanQuery struct {
 	Limit  int
 }
 
-type ScanResult[T any] struct {
+type ScanResult struct {
 	Cursor  string
-	Records []T
+	Records []interface{}
 }
