@@ -56,7 +56,7 @@ func (natsbus *Nats) UseSub(fn func(ctx context.Context, event *Event) error) na
 				return
 			}
 
-			logger.Errorw("nak was succesful", "error", err.Error())
+			logger.Infow("nak was succesful", "error", err.Error())
 			return
 		}
 
