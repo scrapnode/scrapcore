@@ -1,4 +1,4 @@
-package cache
+package xcache
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 )
 
 func NewRedis(ctx context.Context, cfg *Configs) (Cache, error) {
-	logger := xlogger.FromContext(ctx).With("pkg", "cache.redis")
+	logger := xlogger.FromContext(ctx).With("pkg", "xcache.redis")
 	return &Redis{cfg: cfg, logger: logger}, nil
 }
 

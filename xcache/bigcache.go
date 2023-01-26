@@ -1,4 +1,4 @@
-package cache
+package xcache
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 )
 
 func NewBigCache(ctx context.Context, cfg *Configs) (Cache, error) {
-	logger := xlogger.FromContext(ctx).With("pkg", "cache.bigcache")
+	logger := xlogger.FromContext(ctx).With("pkg", "xcache.bigcache")
 	return &BigCache{cfg: cfg, logger: logger}, nil
 }
 

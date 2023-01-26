@@ -1,10 +1,10 @@
-package cache_test
+package xcache_test
 
 import (
 	"context"
 	"github.com/allegro/bigcache/v3"
 	"github.com/redis/go-redis/v9"
-	"github.com/scrapnode/scrapcore/cache"
+	"github.com/scrapnode/scrapcore/xcache"
 	"github.com/scrapnode/scrapcore/xlogger"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -13,7 +13,7 @@ import (
 func TestNew_Err(t *testing.T) {
 	ctx := xlogger.WithContext(context.Background(), xlogger.New(xlogger.LEVEL_TEST))
 
-	c, err := cache.New(ctx, &cache.Configs{
+	c, err := xcache.New(ctx, &xcache.Configs{
 		Dsn:           "/\n/",
 		SecondsToLive: 0,
 	})
@@ -24,7 +24,7 @@ func TestNew_Err(t *testing.T) {
 func TestNew_ReturnMemoryCache(t *testing.T) {
 	ctx := xlogger.WithContext(context.Background(), xlogger.New(xlogger.LEVEL_TEST))
 
-	c, err := cache.New(ctx, &cache.Configs{
+	c, err := xcache.New(ctx, &xcache.Configs{
 		Dsn: "bigcache://localhost",
 	})
 	assert.Nil(t, err)
@@ -36,7 +36,7 @@ func TestNew_ReturnMemoryCache(t *testing.T) {
 func TestNew_ReturnRedis(t *testing.T) {
 	ctx := xlogger.WithContext(context.Background(), xlogger.New(xlogger.LEVEL_TEST))
 
-	c, err := cache.New(ctx, &cache.Configs{
+	c, err := xcache.New(ctx, &xcache.Configs{
 		Dsn: "redis://localhost:6379/0",
 	})
 	assert.Nil(t, err)

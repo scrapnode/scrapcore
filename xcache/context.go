@@ -1,12 +1,12 @@
-package cache
+package xcache
 
 import "context"
 
 type ctxkey string
 
 const (
-	OPT_TTL ctxkey = "cache.options.ttl"
-	CACHE   ctxkey = "cache"
+	OPT_TTL ctxkey = "xcache.options.ttl"
+	CACHE   ctxkey = "xcache"
 )
 
 func WithContext(ctx context.Context, cache Cache) context.Context {

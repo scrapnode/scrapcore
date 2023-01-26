@@ -1,8 +1,8 @@
-package cache_test
+package xcache_test
 
 import (
 	"github.com/brianvoe/gofakeit/v6"
-	"github.com/scrapnode/scrapcore/cache"
+	"github.com/scrapnode/scrapcore/xcache"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -10,11 +10,11 @@ import (
 func TestEncodeDecodeInt_Ok(t *testing.T) {
 	value := gofakeit.IntRange(1, 100)
 
-	data, err := cache.Encode(value)
+	data, err := xcache.Encode(value)
 	assert.Nil(t, err)
 	assert.NotNil(t, data)
 
-	decoded, err := cache.Decode[int](data)
+	decoded, err := xcache.Decode[int](data)
 	assert.Nil(t, err)
 	assert.Equal(t, value, *decoded)
 }
@@ -22,11 +22,11 @@ func TestEncodeDecodeInt_Ok(t *testing.T) {
 func TestEncodeDecodeString_Ok(t *testing.T) {
 	value := gofakeit.Username()
 
-	data, err := cache.Encode(value)
+	data, err := xcache.Encode(value)
 	assert.Nil(t, err)
 	assert.NotNil(t, data)
 
-	decoded, err := cache.Decode[string](data)
+	decoded, err := xcache.Decode[string](data)
 	assert.Nil(t, err)
 	assert.Equal(t, value, *decoded)
 }
@@ -38,11 +38,11 @@ func TestEncodeDecodeMap_Ok(t *testing.T) {
 		"active":   gofakeit.Bool(),
 	}
 
-	data, err := cache.Encode(value)
+	data, err := xcache.Encode(value)
 	assert.Nil(t, err)
 	assert.NotNil(t, data)
 
-	decoded, err := cache.Decode[map[string]interface{}](data)
+	decoded, err := xcache.Decode[map[string]interface{}](data)
 	assert.Nil(t, err)
 	assert.Equal(t, value, *decoded)
 }
@@ -60,11 +60,11 @@ func TestEncodeDecodeStruct_Ok(t *testing.T) {
 		Active:   gofakeit.Bool(),
 	}
 
-	data, err := cache.Encode(value)
+	data, err := xcache.Encode(value)
 	assert.Nil(t, err)
 	assert.NotNil(t, data)
 
-	decoded, err := cache.Decode[EncodeDecodeStruct](data)
+	decoded, err := xcache.Decode[EncodeDecodeStruct](data)
 	assert.Nil(t, err)
 	assert.Equal(t, value, *decoded)
 }
