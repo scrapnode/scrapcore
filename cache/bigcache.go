@@ -3,28 +3,51 @@ package cache
 import (
 	"context"
 	"github.com/allegro/bigcache/v3"
+	"github.com/scrapnode/scrapcore/xlogger"
+	"go.uber.org/zap"
 	"sync"
 	"time"
 )
 
 func NewBigCache(ctx context.Context, cfg *Configs) (Cache, error) {
-	opts := bigcache.DefaultConfig(time.Duration(cfg.SecondsToLive) * time.Second)
-	client, err := bigcache.New(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-
-	return &BigCache{cfg: cfg, client: client}, nil
+	logger := xlogger.FromContext(ctx).With("pkg", "cache.bigcache")
+	return &BigCache{cfg: cfg, logger: logger}, nil
 }
 
 type BigCache struct {
 	cfg    *Configs
+	logger *zap.SugaredLogger
 	client *bigcache.BigCache
 	mu     sync.Mutex
 }
 
 func (cache *BigCache) Client() interface{} {
 	return cache.client
+}
+
+func (cache *BigCache) Connect(ctx context.Context) error {
+	cache.mu.Lock()
+	defer cache.mu.Unlock()
+
+	eviction := time.Duration(cache.cfg.SecondsToLive) * time.Second
+	opts := bigcache.DefaultConfig(eviction)
+	client, err := bigcache.New(ctx, opts)
+	if err != nil {
+		return err
+	}
+
+	cache.client = client
+	cache.logger.Info("connected")
+	return nil
+}
+
+func (cache *BigCache) Disconnect(ctx context.Context) error {
+	cache.mu.Lock()
+	defer cache.mu.Unlock()
+
+	err := cache.client.Close()
+	cache.logger.Info("disconnected")
+	return err
 }
 
 func (cache *BigCache) Get(ctx context.Context, key string) ([]byte, error) {

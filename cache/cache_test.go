@@ -5,12 +5,15 @@ import (
 	"github.com/allegro/bigcache/v3"
 	"github.com/redis/go-redis/v9"
 	"github.com/scrapnode/scrapcore/cache"
+	"github.com/scrapnode/scrapcore/xlogger"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestNew_Err(t *testing.T) {
-	c, err := cache.New(context.Background(), &cache.Configs{
+	ctx := xlogger.WithContext(context.Background(), xlogger.New(xlogger.LEVEL_TEST))
+
+	c, err := cache.New(ctx, &cache.Configs{
 		Dsn:           "/\n/",
 		SecondsToLive: 0,
 	})
@@ -19,7 +22,11 @@ func TestNew_Err(t *testing.T) {
 }
 
 func TestNew_ReturnMemoryCache(t *testing.T) {
-	c, err := cache.New(context.Background(), &cache.Configs{})
+	ctx := xlogger.WithContext(context.Background(), xlogger.New(xlogger.LEVEL_TEST))
+
+	c, err := cache.New(ctx, &cache.Configs{
+		Dsn: "bigcache://localhost",
+	})
 	assert.Nil(t, err)
 
 	_, ok := c.Client().(*bigcache.BigCache)
@@ -27,7 +34,9 @@ func TestNew_ReturnMemoryCache(t *testing.T) {
 }
 
 func TestNew_ReturnRedis(t *testing.T) {
-	c, err := cache.New(context.Background(), &cache.Configs{
+	ctx := xlogger.WithContext(context.Background(), xlogger.New(xlogger.LEVEL_TEST))
+
+	c, err := cache.New(ctx, &cache.Configs{
 		Dsn: "redis://localhost:6379/0",
 	})
 	assert.Nil(t, err)

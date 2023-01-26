@@ -3,21 +3,43 @@ package cache
 import (
 	"context"
 	"github.com/redis/go-redis/v9"
+	"github.com/scrapnode/scrapcore/xlogger"
+	"go.uber.org/zap"
 	"net/url"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
 func NewRedis(ctx context.Context, cfg *Configs) (Cache, error) {
-	uri, err := url.Parse(cfg.Dsn)
+	logger := xlogger.FromContext(ctx).With("pkg", "cache.redis")
+	return &Redis{cfg: cfg, logger: logger}, nil
+}
+
+type Redis struct {
+	cfg    *Configs
+	logger *zap.SugaredLogger
+	client *redis.Client
+	mu     sync.Mutex
+}
+
+func (cache *Redis) Client() interface{} {
+	return cache.client
+}
+
+func (cache *Redis) Connect(ctx context.Context) error {
+	cache.mu.Lock()
+	defer cache.mu.Unlock()
+
+	uri, err := url.Parse(cache.cfg.Dsn)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	db, err := strconv.Atoi(strings.Replace(uri.Path, "/", "", -1))
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	opts := &redis.Options{
@@ -28,17 +50,20 @@ func NewRedis(ctx context.Context, cfg *Configs) (Cache, error) {
 	if password, ok := uri.User.Password(); ok {
 		opts.Password = password
 	}
+	cache.client = redis.NewClient(opts)
 
-	return &Redis{cfg: cfg, client: redis.NewClient(opts)}, nil
+	cache.logger.Info("connected")
+	return nil
 }
 
-type Redis struct {
-	cfg    *Configs
-	client *redis.Client
-}
+func (cache *Redis) Disconnect(ctx context.Context) error {
+	cache.mu.Lock()
+	defer cache.mu.Unlock()
 
-func (cache *Redis) Client() interface{} {
-	return cache.client
+	err := cache.client.Close()
+
+	cache.logger.Info("disconnected")
+	return err
 }
 
 func (cache *Redis) Get(ctx context.Context, key string) ([]byte, error) {
