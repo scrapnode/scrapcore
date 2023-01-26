@@ -71,11 +71,7 @@ func (cache *Redis) Get(ctx context.Context, key string) ([]byte, error) {
 }
 
 func (cache *Redis) Set(ctx context.Context, key string, value []byte) error {
-	stl := time.Duration(cache.cfg.SecondsToLive) * time.Second
-	if ttl := ctx.Value(OPT_TTL); ttl != nil {
-		stl = ttl.(time.Duration)
-	}
-	return cache.client.Set(ctx, key, value, stl).Err()
+	return cache.client.Set(ctx, key, value, cache.STL(ctx)).Err()
 }
 
 func (cache *Redis) Del(ctx context.Context, key string) error {
@@ -88,9 +84,33 @@ func (cache *Redis) Exists(ctx context.Context, key string) bool {
 }
 
 func (cache *Redis) Incr(ctx context.Context, key string) (int64, error) {
-	return cache.client.Incr(ctx, key).Result()
+	count, err := cache.client.Incr(ctx, key).Result()
+	// reset expire time when we increase counter
+	if err == nil {
+		if err := cache.client.Expire(ctx, key, cache.STL(ctx)).Err(); err != nil {
+			cache.logger.Errorw("could not reset expire time after increased", "key", key)
+		}
+	}
+
+	return count, err
 }
 
 func (cache *Redis) Decr(ctx context.Context, key string) (int64, error) {
-	return cache.client.Incr(ctx, key).Result()
+	count, err := cache.client.Decr(ctx, key).Result()
+	// reset expire time when we decrease counter
+	if err == nil {
+		if err := cache.client.Expire(ctx, key, cache.STL(ctx)).Err(); err != nil {
+			cache.logger.Errorw("could not reset expire time after decreased", "key", key)
+		}
+	}
+
+	return count, err
+}
+
+func (cache *Redis) STL(ctx context.Context) time.Duration {
+	if ttl := ctx.Value(OPT_TTL); ttl != nil {
+		return ttl.(time.Duration)
+	}
+
+	return time.Duration(cache.cfg.SecondsToLive) * time.Second
 }
