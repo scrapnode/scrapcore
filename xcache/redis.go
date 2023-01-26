@@ -66,12 +66,12 @@ func (cache *Redis) Disconnect(ctx context.Context) error {
 	return err
 }
 
-func (cache *Redis) Get(ctx context.Context, key string) ([]byte, error) {
-	return cache.client.Get(ctx, key).Bytes()
-}
-
 func (cache *Redis) Set(ctx context.Context, key string, value []byte) error {
 	return cache.client.Set(ctx, key, value, cache.STL(ctx)).Err()
+}
+
+func (cache *Redis) Get(ctx context.Context, key string) ([]byte, error) {
+	return cache.client.Get(ctx, key).Bytes()
 }
 
 func (cache *Redis) Del(ctx context.Context, key string) error {

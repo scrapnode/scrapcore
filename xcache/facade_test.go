@@ -42,12 +42,12 @@ func setupFacade() (context.Context, func()) {
 	ctx := xlogger.WithContext(context.Background(), xlogger.New(xlogger.LEVEL_TEST))
 
 	cfg := &xcache.Configs{Dsn: "bigcache://localhost", SecondsToLive: 60}
-	c, err := xcache.NewBigCache(ctx, cfg)
+	cache, err := xcache.NewBigCache(ctx, cfg)
 	if err != nil {
 		panic(err)
 	}
-	if err := c.Connect(ctx); err != nil {
+	if err := cache.Connect(ctx); err != nil {
 		panic(err)
 	}
-	return xcache.WithContext(ctx, c), func() { _ = c.Disconnect(ctx) }
+	return xcache.WithContext(ctx, cache), func() { _ = cache.Disconnect(ctx) }
 }

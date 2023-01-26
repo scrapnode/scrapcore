@@ -10,8 +10,8 @@ type Cache interface {
 	Client() interface{}
 	Connect(ctx context.Context) error
 	Disconnect(ctx context.Context) error
-	Get(ctx context.Context, key string) ([]byte, error)
 	Set(ctx context.Context, key string, value []byte) error
+	Get(ctx context.Context, key string) ([]byte, error)
 	Del(ctx context.Context, key string) error
 	Exists(ctx context.Context, key string) bool
 	Incr(ctx context.Context, key string) (int64, error)

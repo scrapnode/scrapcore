@@ -2,6 +2,7 @@ package xcache
 
 import (
 	"context"
+	"errors"
 	"github.com/allegro/bigcache/v3"
 	"github.com/scrapnode/scrapcore/xlogger"
 	"go.uber.org/zap"
@@ -50,15 +51,15 @@ func (cache *BigCache) Disconnect(ctx context.Context) error {
 	return err
 }
 
-func (cache *BigCache) Get(ctx context.Context, key string) ([]byte, error) {
-	return cache.client.Get(key)
-}
-
 func (cache *BigCache) Set(ctx context.Context, key string, value []byte) error {
 	cache.mu.Lock()
 	defer cache.mu.Unlock()
 
 	return cache.client.Set(key, value)
+}
+
+func (cache *BigCache) Get(ctx context.Context, key string) ([]byte, error) {
+	return cache.client.Get(key)
 }
 
 func (cache *BigCache) Del(ctx context.Context, key string) error {
@@ -91,17 +92,22 @@ func (cache *BigCache) incr(ctx context.Context, key string, change int64) (int6
 	cache.mu.Lock()
 	defer cache.mu.Unlock()
 
+	var value int64
+
 	val, err := cache.client.Get(key)
-	if err != nil {
+	// should return error if it is not entry not found error
+	if err != nil && !errors.Is(err, bigcache.ErrEntryNotFound) {
 		return 0, err
 	}
-
-	value, err := Decode[int64](val)
-	if err != nil {
-		return 0, err
+	if err == nil {
+		valueptr, err := Decode[int64](val)
+		if err != nil {
+			return 0, err
+		}
+		value = *valueptr
 	}
 
-	newValue := *value + change
+	newValue := value + change
 
 	bytes, err := Encode(newValue)
 	if err != nil {
