@@ -37,15 +37,20 @@ func (cache *Redis) Connect(ctx context.Context) error {
 		return err
 	}
 
-	db, err := strconv.Atoi(strings.Replace(uri.Path, "/", "", -1))
-	if err != nil {
-		return err
-	}
-
 	opts := &redis.Options{
 		Addr:     uri.Host,
-		DB:       db,
+		DB:       0,
 		Username: uri.User.Username(),
+	}
+
+	dbstr := strings.Replace(uri.Path, "/", "", -1)
+	if dbstr != "" {
+		db, err := strconv.Atoi(dbstr)
+		if err == nil {
+			opts.DB = db
+		} else {
+			cache.logger.Errorw("could not parse db number, use 0 as default", "error", err.Error())
+		}
 	}
 	if password, ok := uri.User.Password(); ok {
 		opts.Password = password
