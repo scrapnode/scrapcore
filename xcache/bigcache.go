@@ -46,6 +46,10 @@ func (cache *BigCache) Disconnect(ctx context.Context) error {
 	cache.mu.Lock()
 	defer cache.mu.Unlock()
 
+	if cache.client == nil {
+		return nil
+	}
+
 	err := cache.client.Close()
 	cache.logger.Info("disconnected")
 	return err

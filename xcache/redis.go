@@ -60,8 +60,11 @@ func (cache *Redis) Disconnect(ctx context.Context) error {
 	cache.mu.Lock()
 	defer cache.mu.Unlock()
 
-	err := cache.client.Close()
+	if cache.client == nil {
+		return nil
+	}
 
+	err := cache.client.Close()
 	cache.logger.Info("disconnected")
 	return err
 }
