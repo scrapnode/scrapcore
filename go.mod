@@ -4,9 +4,11 @@ go 1.19
 
 require (
 	github.com/allegro/bigcache/v3 v3.1.0
+	github.com/benbjohnson/clock v1.1.0
 	github.com/brianvoe/gofakeit/v6 v6.20.1
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/go-resty/resty/v2 v2.7.0
+	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/gosimple/slug v1.13.1
 	github.com/jedib0t/go-pretty/v6 v6.4.4
