@@ -11,9 +11,8 @@ import (
 )
 
 type AccessKeyClaims struct {
-	Workspaces  []string `json:"workspaces"`
-	WorkspaceId string   `json:"workspace_id"`
-	Email       string   `json:"email"`
+	Workspaces []string `json:"workspaces"`
+	Email      string   `json:"email"`
 	jwt.RegisteredClaims
 }
 
@@ -37,6 +36,14 @@ type AccessKey struct {
 	issuer string
 }
 
+func (auth *AccessKey) Connect(ctx context.Context) error {
+	return nil
+}
+
+func (auth *AccessKey) Disconnect(ctx context.Context) error {
+	return nil
+}
+
 func (auth *AccessKey) Sign(ctx context.Context, creds *SignCreds) (*Tokens, error) {
 	if ok := creds.Username == auth.id && creds.Password == auth.key; !ok {
 		return nil, ErrSignFailed
@@ -50,7 +57,6 @@ func (auth *AccessKey) sign(username string) (*Tokens, error) {
 	// access token
 	attoken := jwt.NewWithClaims(auth.algo, AccessKeyClaims{
 		[]string{"*"},
-		"*",
 		fmt.Sprintf("%s@scrapnode.com", username),
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(now.Add(time.Duration(EXPIRE_HOURS) * time.Hour)),
@@ -103,7 +109,7 @@ func (auth *AccessKey) Verify(ctx context.Context, accessToken string) (*Account
 	if err != nil {
 		return nil, err
 	}
-	if claims.Email == "" || claims.WorkspaceId == "" {
+	if claims.Email == "" || len(claims.Workspaces) == 0 {
 		return nil, ErrInvalidTokenClaims
 	}
 	if !strings.HasPrefix(claims.ID, "jwt_access") {
@@ -111,11 +117,10 @@ func (auth *AccessKey) Verify(ctx context.Context, accessToken string) (*Account
 	}
 
 	account := &Account{
-		Workspaces:  claims.Workspaces,
-		WorkspaceId: claims.WorkspaceId,
-		Id:          claims.Subject,
-		Name:        claims.Subject,
-		Email:       claims.Email,
+		Workspaces: claims.Workspaces,
+		Id:         claims.Subject,
+		Name:       claims.Subject,
+		Email:      claims.Email,
 	}
 	return account, err
 }
@@ -127,7 +132,6 @@ func (auth *AccessKey) claims(jwtclaims jwt.Claims) (*AccessKeyClaims, error) {
 	}
 	claims := &AccessKeyClaims{
 		[]string{},
-		"",
 		"",
 		jwt.RegisteredClaims{
 			Issuer:  "",
@@ -142,10 +146,6 @@ func (auth *AccessKey) claims(jwtclaims jwt.Claims) (*AccessKeyClaims, error) {
 				claims.Workspaces = append(claims.Workspaces, workspace)
 			}
 		}
-	}
-
-	if wsid, ok := mapclaims["workspace_id"].(string); ok {
-		claims.WorkspaceId = wsid
 	}
 
 	if email, ok := mapclaims["email"].(string); ok {

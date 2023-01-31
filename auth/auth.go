@@ -5,6 +5,8 @@ import "context"
 var EXPIRE_HOURS = 1
 
 type Auth interface {
+	Connect(ctx context.Context) error
+	Disconnect(ctx context.Context) error
 	Sign(ctx context.Context, creds *SignCreds) (*Tokens, error)
 	Verify(ctx context.Context, token string) (*Account, error)
 	Refresh(ctx context.Context, tokens *Tokens) (*Tokens, error)
@@ -21,9 +23,8 @@ type Tokens struct {
 }
 
 type Account struct {
-	Workspaces  []string `json:"workspaces"`
-	WorkspaceId string   `json:"workspace_id"`
-	Id          string   `json:"id"`
-	Name        string   `json:"name"`
-	Email       string   `json:"email"`
+	Workspaces []string `json:"workspaces"`
+	Id         string   `json:"id"`
+	Name       string   `json:"name"`
+	Email      string   `json:"email"`
 }
