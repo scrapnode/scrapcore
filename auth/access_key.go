@@ -16,12 +16,12 @@ type AccessKeyClaims struct {
 	jwt.RegisteredClaims
 }
 
-func NewAccessKey(id, key string) *AccessKey {
+func NewAccessKey(id, secret string) *AccessKey {
 	return &AccessKey{
 		Clock:  clock.New(),
 		id:     id,
-		key:    key,
-		secret: []byte(fmt.Sprintf("%s:%s", id, key)),
+		secret: secret,
+		key:    []byte(fmt.Sprintf("%s:%s", id, secret)),
 		algo:   jwt.SigningMethodHS512,
 		issuer: "https://auth.scrapnode.com",
 	}
@@ -30,8 +30,8 @@ func NewAccessKey(id, key string) *AccessKey {
 type AccessKey struct {
 	Clock  clock.Clock
 	id     string
-	key    string
-	secret []byte
+	secret string
+	key    []byte
 	algo   jwt.SigningMethod
 	issuer string
 }
@@ -45,7 +45,7 @@ func (auth *AccessKey) Disconnect(ctx context.Context) error {
 }
 
 func (auth *AccessKey) Sign(ctx context.Context, creds *SignCreds) (*Tokens, error) {
-	if ok := creds.Username == auth.id && creds.Password == auth.key; !ok {
+	if ok := creds.Username == auth.id && creds.Password == auth.secret; !ok {
 		return nil, ErrSignFailed
 	}
 
@@ -67,7 +67,7 @@ func (auth *AccessKey) sign(username string) (*Tokens, error) {
 			ID:        utils.NewId("jwt_access"),
 		},
 	})
-	at, err := attoken.SignedString(auth.secret)
+	at, err := attoken.SignedString(auth.key)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (auth *AccessKey) sign(username string) (*Tokens, error) {
 		Subject:   username,
 		ID:        utils.NewId("jwt_refresh"),
 	})
-	rt, err := rttoken.SignedString(auth.secret)
+	rt, err := rttoken.SignedString(auth.key)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +96,7 @@ func (auth *AccessKey) Verify(ctx context.Context, accessToken string) (*Account
 			return nil, ErrInvalidSignMethod
 		}
 
-		return auth.secret, nil
+		return auth.key, nil
 	})
 	if err != nil {
 		return nil, err
@@ -185,7 +185,7 @@ func (auth *AccessKey) Refresh(ctx context.Context, tokens *Tokens) (*Tokens, er
 			return nil, ErrInvalidSignMethod
 		}
 
-		return auth.secret, nil
+		return auth.key, nil
 	})
 	if err != nil {
 		return nil, err

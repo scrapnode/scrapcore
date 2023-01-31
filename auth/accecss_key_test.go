@@ -30,7 +30,6 @@ func TestAccessKey(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, account)
 	assert.Equal(t, creds.Username, account.Id)
-	assert.Equal(t, "*", account.WorkspaceId)
 	assert.Equal(t, []string{"*"}, account.Workspaces)
 	assert.Equal(t, fmt.Sprintf("%s@scrapnode.com", creds.Username), account.Email)
 }
