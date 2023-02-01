@@ -1,6 +1,9 @@
 package auth
 
-import "context"
+import (
+	"context"
+	"github.com/samber/lo"
+)
 
 var (
 	ACCESS_TOKEN_EXPIRE_HOURS  = 1
@@ -30,4 +33,8 @@ type Account struct {
 	Id         string   `json:"id"`
 	Name       string   `json:"name"`
 	Email      string   `json:"email"`
+}
+
+func (account *Account) OwnWorkspace(id string) bool {
+	return account.Workspaces != nil && lo.Contains(account.Workspaces, id)
 }
