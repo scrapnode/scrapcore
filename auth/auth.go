@@ -36,5 +36,9 @@ type Account struct {
 }
 
 func (account *Account) OwnWorkspace(id string) bool {
+	// can access all workspaces
+	if lo.Contains(account.Workspaces, "*") {
+		return true
+	}
 	return account.Workspaces != nil && lo.Contains(account.Workspaces, id)
 }
