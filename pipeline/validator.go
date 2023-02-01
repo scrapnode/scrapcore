@@ -2,6 +2,7 @@ package pipeline
 
 import (
 	"context"
+	"errors"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -13,8 +14,8 @@ func UseValidator() Pipeline {
 			req := ctx.Value(CTXKEY_REQ)
 			err := validate.Struct(req)
 			if err != nil {
-				if errors, ok := err.(validator.ValidationErrors); !ok {
-					return context.WithValue(ctx, CTXKEY_ERR, errors), nil
+				if details, ok := err.(validator.ValidationErrors); !ok {
+					return context.WithValue(ctx, CTXKEY_ERR, details), errors.New("validation is failed")
 				}
 
 				return ctx, err
