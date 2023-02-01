@@ -44,7 +44,7 @@ func (auth *AccessKey) Disconnect(ctx context.Context) error {
 	return nil
 }
 
-func (auth *AccessKey) Sign(ctx context.Context, creds *SignCreds) (*Tokens, error) {
+func (auth *AccessKey) Sign(ctx context.Context, creds *SignCreds) (*TokenPair, error) {
 	if ok := creds.Username == auth.id && creds.Password == auth.secret; !ok {
 		return nil, ErrSignFailed
 	}
@@ -52,7 +52,7 @@ func (auth *AccessKey) Sign(ctx context.Context, creds *SignCreds) (*Tokens, err
 	return auth.sign(creds.Username)
 }
 
-func (auth *AccessKey) sign(username string) (*Tokens, error) {
+func (auth *AccessKey) sign(username string) (*TokenPair, error) {
 	now := auth.Clock.Now().UTC()
 	// access token
 	attoken := jwt.NewWithClaims(auth.algo, AccessKeyClaims{
@@ -86,7 +86,7 @@ func (auth *AccessKey) sign(username string) (*Tokens, error) {
 		return nil, err
 	}
 
-	return &Tokens{AccessToken: at, RefreshToken: rt}, err
+	return &TokenPair{AccessToken: at, RefreshToken: rt}, err
 }
 
 func (auth *AccessKey) Verify(ctx context.Context, accessToken string) (*Account, error) {
@@ -173,7 +173,7 @@ func (auth *AccessKey) claims(jwtclaims jwt.Claims) (*AccessKeyClaims, error) {
 	return claims, nil
 }
 
-func (auth *AccessKey) Refresh(ctx context.Context, tokens *Tokens) (*Tokens, error) {
+func (auth *AccessKey) Refresh(ctx context.Context, tokens *TokenPair) (*TokenPair, error) {
 	account, err := auth.Verify(ctx, tokens.AccessToken)
 	if err != nil {
 		return nil, err

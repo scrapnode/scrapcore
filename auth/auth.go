@@ -10,9 +10,9 @@ var (
 type Auth interface {
 	Connect(ctx context.Context) error
 	Disconnect(ctx context.Context) error
-	Sign(ctx context.Context, creds *SignCreds) (*Tokens, error)
+	Sign(ctx context.Context, creds *SignCreds) (*TokenPair, error)
 	Verify(ctx context.Context, token string) (*Account, error)
-	Refresh(ctx context.Context, tokens *Tokens) (*Tokens, error)
+	Refresh(ctx context.Context, tokens *TokenPair) (*TokenPair, error)
 }
 
 type SignCreds struct {
@@ -20,7 +20,7 @@ type SignCreds struct {
 	Password string `json:"password"`
 }
 
-type Tokens struct {
+type TokenPair struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
 }
