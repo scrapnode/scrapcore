@@ -2,7 +2,10 @@ package auth
 
 import "context"
 
-var EXPIRE_HOURS = 1
+var (
+	ACCESS_TOKEN_EXPIRE_HOURS  = 1
+	REFRESH_TOKEN_EXPIRE_HOURS = 720 // 30 days
+)
 
 type Auth interface {
 	Connect(ctx context.Context) error

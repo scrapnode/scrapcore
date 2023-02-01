@@ -59,7 +59,7 @@ func (auth *AccessKey) sign(username string) (*Tokens, error) {
 		[]string{"*"},
 		fmt.Sprintf("%s@scrapnode.com", username),
 		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(now.Add(time.Duration(EXPIRE_HOURS) * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(now.Add(time.Duration(ACCESS_TOKEN_EXPIRE_HOURS) * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(now),
 			NotBefore: jwt.NewNumericDate(now),
 			Issuer:    auth.issuer,
@@ -74,7 +74,7 @@ func (auth *AccessKey) sign(username string) (*Tokens, error) {
 
 	// refresh token
 	rttoken := jwt.NewWithClaims(auth.algo, jwt.RegisteredClaims{
-		ExpiresAt: jwt.NewNumericDate(now.Add(time.Duration(EXPIRE_HOURS*2) * time.Hour)),
+		ExpiresAt: jwt.NewNumericDate(now.Add(time.Duration(REFRESH_TOKEN_EXPIRE_HOURS) * time.Hour)),
 		IssuedAt:  jwt.NewNumericDate(now),
 		NotBefore: jwt.NewNumericDate(now),
 		Issuer:    auth.issuer,
