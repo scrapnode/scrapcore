@@ -6,7 +6,7 @@ import (
 	"github.com/scrapnode/scrapcore/auth"
 )
 
-func UseAccount() Pipeline {
+func UseAccountValidator() Pipeline {
 	return func(next Pipe) Pipe {
 		return func(ctx context.Context) (context.Context, error) {
 			if _, ok := ctx.Value(CTXKEY_ACCOUNT).(*auth.Account); !ok {
