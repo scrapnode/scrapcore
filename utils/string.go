@@ -4,11 +4,13 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"math"
 	"strings"
 	"time"
 	"unsafe"
 
 	"github.com/segmentio/ksuid"
+	"github.com/sethvargo/go-password/password"
 )
 
 func NewId(prefix string) string {
@@ -47,4 +49,8 @@ func StringToBytes(s string) []byte {
 // BytesToString converts byte slice to string without a memory allocation.
 func BytesToString(b []byte) string {
 	return *(*string)(unsafe.Pointer(&b))
+}
+
+func RandomString(len int) string {
+	return password.MustGenerate(len, int(math.Round(float64(len/2))), 0, false, true)
 }
