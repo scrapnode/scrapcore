@@ -7,10 +7,11 @@ import (
 type ctxkey string
 
 const (
-	CTXKEY_REQ     ctxkey = "pipeline.request"
-	CTXKEY_RES     ctxkey = "pipeline.response"
-	CTXKEY_ERR     ctxkey = "pipeline.errors"
-	CTXKEY_ACCOUNT ctxkey = "pipeline.account"
+	CTXKEY_REQ ctxkey = "pipeline.request"
+	CTXKEY_RES ctxkey = "pipeline.response"
+	CTXKEY_ERR ctxkey = "pipeline.errors"
+	CTXKEY_ACC ctxkey = "pipeline.account"
+	CTXKEY_WS  ctxkey = "pipeline.workspace"
 )
 
 type Pipe func(ctx context.Context) (context.Context, error)
