@@ -2,7 +2,8 @@ package database
 
 type ScanQuery struct {
 	Cursor string
-	Limit  int
+	Size   int
+	Search string
 }
 
 type ScanResult struct {
