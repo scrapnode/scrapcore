@@ -1,5 +1,5 @@
 package database
 
-func (db *SQL) GetConn() any {
+func (db *SQL) Conn() any {
 	return db.conn
 }

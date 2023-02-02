@@ -16,7 +16,7 @@ type Database interface {
 	Migrate(ctx context.Context) error
 	Seed(ctx context.Context, seeds []string) error
 
-	GetConn() any
+	Conn() any
 }
 
 type ListQuery struct {
