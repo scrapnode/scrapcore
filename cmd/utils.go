@@ -12,8 +12,11 @@ import (
 func ChainPreRunE() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		parent := cmd.Parent()
-		err := parent.PreRunE(parent, args)
+		if parent == nil {
+			return nil
+		}
 
+		err := parent.PreRunE(parent, args)
 		cmd.SetContext(parent.Context())
 		return err
 	}
