@@ -3,6 +3,7 @@ package utils
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"math"
 	"strings"
@@ -21,9 +22,14 @@ func NewBucket(template string, t time.Time) (string, int64) {
 	return t.Format(template), t.UnixMilli()
 }
 
-func MD5(text string) string {
-	hash := md5.Sum([]byte(text))
-	return hex.EncodeToString(hash[:])
+func MD5(obj any) (string, error) {
+	bytes, err := json.Marshal(obj)
+	if err != nil {
+		return "", err
+	}
+
+	hash := md5.Sum(bytes)
+	return hex.EncodeToString(hash[:]), nil
 }
 
 func Censor(value string, show int) string {
